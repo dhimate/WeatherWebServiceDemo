@@ -1,0 +1,45 @@
+//*****************************************************************************
+//Title:         WeatherServiceMonitor
+//Description:   WeatherServiceMonitor description
+//Dependencies:  None
+//Author:        IEUser
+
+//*****************************************************************************
+
+
+
+//TODO: Monitors and event definitions here
+
+monitor WeatherServiceMonitor {
+	MyRequest myRequest;
+	MyResponse myResponse;
+	MyZIP myZIP;
+
+	action onload() {
+
+		on all MyZIP(): myZIP {
+			print "Received request for ZIP code : " + myZIP.ZIP;
+			print "Preparing to call the service " ;
+			myRequest.GetCityWeatherByZIP.ZIP := myZIP.ZIP;
+			route myRequest;			 
+		}
+
+		on all MyResponse(): myResponse {
+			print 
+				myResponse.GetCityWeatherByZIPResponse.
+				GetCityWeatherByZIPResult.ResponseText 
+			+ " " 
+			+ 	myResponse.GetCityWeatherByZIPResponse.
+				GetCityWeatherByZIPResult.City
+			+ " " 
+			+ 	myResponse.GetCityWeatherByZIPResponse.
+				GetCityWeatherByZIPResult.Temperature
+			+ " " 
+			+ 	myResponse.GetCityWeatherByZIPResponse.
+				GetCityWeatherByZIPResult.Description
+			+ " " 
+			+ 	myResponse.GetCityWeatherByZIPResponse.
+				GetCityWeatherByZIPResult.Wind; 
+		}
+	}
+}

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lm:eCafModel xmlns:lm="http://www.progress.com/tools/caf/core/internal/logicalStructure/schema/v1.0" version="1.0">
+  <lm:serviceCollection adapterType="WebService" usage="CONSUME">
+    <lm:services displayName="Weather" id="http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL" serviceName="http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL">
+      <lm:details>
+        <lm:adapterDetails>
+          <lm:properties>
+            <lm:properties name="WSDL Location">http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL</lm:properties>
+          </lm:properties>
+        </lm:adapterDetails>
+      </lm:details>
+      <lm:nodes id="Weather_WeatherSoap" name="Weather_WeatherSoap">
+        <lm:invocationOperationReference>
+          <lm:invocationIdentifier>
+            <lm:invocationContextId>Weather_WeatherSoap_GetCityWeatherByZIP_route</lm:invocationContextId>
+            <lm:invocationId>Weather_WeatherSoap_GetCityWeatherByZIP_route</lm:invocationId>
+          </lm:invocationIdentifier>
+          <lm:operationDetails>
+            <lm:idlLocation>Consume/Weather/Weather_WeatherSoap_GetCityWeatherByZIP/Weather_WeatherSoap_GetCityWeatherByZIP.pidl</lm:idlLocation>
+            <lm:operationIdentifier>
+              <lm:targetNamespace>http://ws.cdyne.com/WeatherWS/</lm:targetNamespace>
+              <lm:interfaceName>Weather_WeatherSoap</lm:interfaceName>
+              <lm:operationName>GetCityWeatherByZIP</lm:operationName>
+            </lm:operationIdentifier>
+          </lm:operationDetails>
+          <lm:product>DEFAULT</lm:product>
+          <lm:springXmlLocation>Consume/Weather/Weather_WeatherSoap_GetCityWeatherByZIP/Weather_WeatherSoap_GetCityWeatherByZIP_route.xml</lm:springXmlLocation>
+          <lm:name>GetCityWeatherByZIP</lm:name>
+          <lm:description>Allows you to get your City's Weather, which is updated hourly. U.S. Only</lm:description>
+          <lm:summary>GetCityWeatherByZIP:WeatherSoap:Weather</lm:summary>
+          <lm:details>
+            <lm:adapterDetails>
+              <lm:properties>
+                <lm:properties name="Binding">{http://ws.cdyne.com/WeatherWS/}WeatherSoap</lm:properties>
+                <lm:properties name="Operation">GetCityWeatherByZIP</lm:properties>
+                <lm:properties name="Port">WeatherSoap</lm:properties>
+                <lm:properties name="Service">{http://ws.cdyne.com/WeatherWS/}Weather</lm:properties>
+              </lm:properties>
+            </lm:adapterDetails>
+          </lm:details>
+          <lm:propertyDetails>
+            <lm:propertyFileLocation>Consume/Weather/Weather_WeatherSoap_GetCityWeatherByZIP/Weather_WeatherSoap_GetCityWeatherByZIP_route.properties</lm:propertyFileLocation>
+          </lm:propertyDetails>
+        </lm:invocationOperationReference>
+      </lm:nodes>
+      <lm:propertyDetails>
+        <lm:propertyFileLocation>Consume/Weather/Weather.properties</lm:propertyFileLocation>
+      </lm:propertyDetails>
+    </lm:services>
+  </lm:serviceCollection>
+  <lm:propertyDetails>
+    <lm:propertyFileLocation>WeatherWebServiceDemo.properties</lm:propertyFileLocation>
+  </lm:propertyDetails>
+</lm:eCafModel>

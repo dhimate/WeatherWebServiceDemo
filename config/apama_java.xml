@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java-applications>
+	<application name="WeatherWebServiceDemo">
+		<version>1.0</version>
+		<company></company>
+		<author></author>
+		<description></description>
+		<classpath></classpath>
+		<build-auto>true</build-auto>
+		<content>
+		</content>
+	</application>
+</java-applications>

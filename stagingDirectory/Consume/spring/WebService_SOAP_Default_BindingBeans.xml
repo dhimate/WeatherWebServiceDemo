@@ -1,0 +1,68 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:wx="http://www.gama-system.com/webservices" xmlns:cafBinding="http://www.progress.com/caf/binding/strategy"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd 
+	http://camel.apache.org/schema/spring 
+	http://camel.apache.org/schema/spring/camel-spring.xsd 
+	http://www.progress.com/caf/binding/strategy 
+	http://www.progress.com/caf/binding/cafBinding.xsd">
+
+	<bean id="Default_WebService_SOAPBinding_GlobalBindingRules_bean"
+		class="com.progress.caf.binding.strategy.impl.BindingRulesImpl">
+		<property name="outBindingRules">
+			<set>
+				<!-- SAMPLE RULE -->
+				<!--
+				<cafBinding:bindingRule>
+					<cafBinding:from value="Content-Type" valueType="CAMEL_TRANSPORT_HEADER" />
+					<cafBinding:to value="${prodmsg.parts['content_type_header']}" valueType="EXPRESSION" />
+				</cafBinding:bindingRule>
+				-->
+			</set>
+		</property>
+		<property name="inBindingRules">
+			<set>
+			<!-- SAMPLE RULE -->
+			<!--
+				<cafBinding:bindingRule>
+					<cafBinding:from value="${prodmsg.parts['content_type_header']}" valueType="EXPRESSION" />
+					<cafBinding:to value="Content-Type" valueType="CAMEL_TRANSPORT_HEADER " />
+				</cafBinding:bindingRule>
+			-->
+			</set>
+		</property>
+	</bean>
+
+	<bean
+		id="Default_WebService_SOAPBinding_GlobalSoapHeaderFilterStrategy_inFilter"
+		class="org.springframework.beans.factory.config.SetFactoryBean">
+		<property name="sourceSet">
+			<set>
+			</set>
+		</property>
+	</bean>
+
+	<bean
+		id="Default_WebService_SOAPBinding_GlobalSoapHeaderFilterStrategy_outFilter"
+		class="org.springframework.beans.factory.config.SetFactoryBean">
+		<property name="sourceSet">
+			<set>
+				<value>operationname</value>
+				<value>operationnamespace</value>
+				<value>requestcontext</value>
+				<value>responsecontext</value>
+				<value>content-type</value>
+				<value>content-length</value>
+				<value>principalname</value>
+				<value>principalsource</value>
+				<value>aipropagatedid</value>
+				<value>aipropagatedidlong</value>
+				<value>httpdigestauth</value>
+				<value>httpbasicauth</value>
+				<value>tlsx509subjectfirstcn</value>
+				<value>tlsx509subjectdn</value>
+			</set>
+		</property>
+	</bean>
+</beans>

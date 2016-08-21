@@ -1,0 +1,4308 @@
+VERS 00000001 4
+HEAD 00000ee1 <?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="/resources/transform.xslt"?><header><componentName>correlator</componentName><version>9.10.0.3.284318</version><build>rel/9.10.0.x@284318</build><buildPlatform>amd64-win</buildPlatform><platform>Windows 8</platform><cputype>GenuineIntel family 6 model 13 stepping 4 Intel(R) Core(TM) i5-5200U CPU @ 2.20GHz</cputype><cpus>1</cpus><javaEnabled>true</javaEnabled><replayLogMode>inputLog</replayLogMode><args><arg>C:\SoftwareAG\Apama\bin\correlator.exe</arg><arg>--port</arg><arg>15903</arg><arg>--loglevel</arg><arg>INFO</arg><arg>--name</arg><arg>Apama Designer Correlator for WeatherWebServiceDemo(WeatherWebServiceDemo:defaultCorrelator)</arg><arg>-j</arg><arg>--inputLog</arg><arg>logs/defaultCorrelator_${START_TIME}_${ID}.input.log</arg></args><environment><variable>ALLUSERSPROFILE=C:\ProgramData</variable><variable>APAMA_HOME=C:\SoftwareAG\Apama</variable><variable>APAMA_WORK=C:\Users\Public\SoftwareAG\ApamaWork_9.10</variable><variable>APPDATA=C:\Users\IEUser\AppData\Roaming</variable><variable>CLASSPATH=C:\SoftwareAG\Apama\lib\ap-util.jar;C:\SoftwareAG\Apama\lib\ap-dashboard-client.jar;C:\SoftwareAG\Apama\lib\ap-client.jar;C:\SoftwareAG\Apama\lib\ap-iaf-extension-api.jar;C:\SoftwareAG\Apama\lib\ap-correlator-extension-api.jar;C:\SoftwareAG\Apama\lib\connectivity-plugins-api.jar;C:\SoftwareAG\Apama\lib\log4j.jar</variable><variable>COMMONPROGRAMFILES=C:\Program Files\Common Files</variable><variable>COMMONPROGRAMFILES(X86)=C:\Program Files (x86)\Common Files</variable><variable>COMMONPROGRAMW6432=C:\Program Files\Common Files</variable><variable>COMPUTERNAME=MSEDGEWIN10</variable><variable>COMSPEC=C:\Windows\system32\cmd.exe</variable><variable>CYGWIN=mintty</variable><variable>HOMEDRIVE=C:</variable><variable>HOMEPATH=\Users\IEUser</variable><variable>LOCALAPPDATA=C:\Users\IEUser\AppData\Local</variable><variable>LOGONSERVER=\\MSEDGEWIN10</variable><variable>NUMBER_OF_PROCESSORS=1</variable><variable>OS=Windows_NT</variable><variable>PATH=C:\SoftwareAG\Apama\..\jvm\jvm\jre\bin\server;C:\SoftwareAG\Apama\..\jvm\jvm\jre\bin;C:\SoftwareAG\Apama\lib;C:\SoftwareAG\Apama\bin;C:\SoftwareAG\Apama\adapters\lib;C:\SoftwareAG\Apama\adapters\bin;;C:\SoftwareAG\Apama\..\jvm\jvm\jre\bin\server;C:\SoftwareAG\Apama\..\jvm\jvm\jre\bin;C:\Users\Public\SoftwareAG\ApamaWork_9.10\lib;C:\SoftwareAG\Apama\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\OpenSSH\bin;C:\Users\IEUser\AppData\Local\Microsoft\WindowsApps;</variable><variable>PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC</variable><variable>PROCESSOR_ARCHITECTURE=AMD64</variable><variable>PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 61 Stepping 4, GenuineIntel</variable><variable>PROCESSOR_LEVEL=6</variable><variable>PROCESSOR_REVISION=3d04</variable><variable>PROGRAMDATA=C:\ProgramData</variable><variable>PROGRAMFILES=C:\Program Files</variable><variable>PROGRAMFILES(X86)=C:\Program Files (x86)</variable><variable>PROGRAMW6432=C:\Program Files</variable><variable>PROMPT=$P$G</variable><variable>PSMODULEPATH=C:\Program Files\WindowsPowerShell\Modules;C:\Windows\system32\WindowsPowerShell\v1.0\Modules</variable><variable>PUBLIC=C:\Users\Public</variable><variable>SESSIONNAME=Console</variable><variable>SYSTEMDRIVE=C:</variable><variable>SYSTEMROOT=C:\Windows</variable><variable>TEMP=C:\Users\IEUser\AppData\Local\Temp</variable><variable>TMP=C:\Users\IEUser\AppData\Local\Temp</variable><variable>USERDOMAIN=MSEDGEWIN10</variable><variable>USERDOMAIN_ROAMINGPROFILE=MSEDGEWIN10</variable><variable>USERNAME=IEUser</variable><variable>USERPROFILE=C:\Users\IEUser</variable><variable>WINDIR=C:\Windows</variable></environment><version>9.10.0.3.284318</version></header>
+RAND 0000000a 2865928313
+TIME 00000010 1471744743.998,1
+CONN 0000003e 12303782014269980672:12309071468412731392 from 127.0.0.1:50594
+CONN 0000003e 12303782014269980672:12309072542154752000 from 127.0.0.1:50593
+DISC 0000003e 12303782014269980672:12309071468412731392 from 127.0.0.1:50594
+CONN 0000003e 12303782014269980672:12309072542154686464 from 127.0.0.1:50592
+TIME 0000000e 1471744744.7,1
+MONF 000089d2 package com.apama.adapters;
+
+//*****************************************************************************
+// Apama IAF Status Manager service.
+//
+// The IAF Status Manager provides a factory and event interface for services 
+// that monitor connectivity with an external system, routing events 
+// when the system becomes unresponsive.
+//
+// $Copyright(c) 2005-2013 Progress Software Corporation (PSC). All rights reserved.$
+// $Copyright (c) 2013-2015 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.$
+// Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG
+//
+// Version:  1.0
+// Author:   Prashant Thumma
+// Requires: None.
+// Revision: $Revision: 268343 $
+//
+//*****************************************************************************
+
+// -----------------------------------------------------------------------------
+// Public Application Interface - between the IAFStatusManager service and EPL 
+// clients of this service.
+// -----------------------------------------------------------------------------
+
+// Input events
+
+/**
+ * Sent from a client monitor to the IAFStatusManager, to register interest in 
+ * receiving status events from the specified codec and transport. The fields 
+ * of this event uniquely identify a subscription. 
+ */
+event AdapterStatusRegister {
+	/** An identifier that will be used to refer to this transport and codec 
+	 * pair when registering, deregistering or monitoring adapter status. 
+	 */
+	string adapterName;
+	
+	/** The name of the adapter's codec as it is specified in the adapter
+	 * configuration file.
+	 */
+	string codec;
+
+	/** The name of the adapter's transport as it is specified in the adapter
+	 * configuration file.
+	 */
+	string transport;
+	
+	/** Codec version filter: in most cases, specify empty string ("") for 
+	 * this field. 
+	 *
+	 * If set to a non-empty string, this field indicates the precise 
+	 * codec version that the client depends on, which will lead to a 
+	 * failed subscription attempt and an AdapterError event being sent to the 
+	 * client if the versions do not match exactly. 
+	 *
+	 * The reason that Apama now recommends this field should usually be empty 
+	 * is that most applications should implement a less simplistic policy 
+	 * for handling version mismatch by specifying an empty string for this 
+	 * value when subscribing, and then testing the version in an 
+	 * application-specific when the AdapterUp event is received, e.g. 
+	 * logging a WARN rather than failing entirely when there's a version 
+	 * mismatch, or checking the major.minor version only (to avoid failing 
+	 * when the fix version number is changed). 
+	 *
+	 * It is particularly important not to set the codecVersion filter 
+	 * for applications in a persistent Correlator, since a product or adapter 
+	 * upgrade that changes the fix version number is likely to prevent the 
+	 * application from working correctly (unless specific steps are taken to 
+	 * delete and reinject associated EPL as part of the upgrade). 
+	 *
+	 */
+	string codecVersion;
+
+	/** Transport version filter: in most cases, specify empty string ("") for 
+	 * this field. 
+	 *
+	 * If set to a non-empty string, this field indicates the precise 
+	 * transport version that the client depends on, which will lead to a 
+	 * failed subscription attempt and an AdapterError event being sent to the 
+	 * client if the versions do not match exactly. 
+	 *
+	 * The reason that Apama now recommends this field should usually be empty 
+	 * is that most applications should implement a less simplistic policy 
+	 * for handling version mismatch by specifying an empty string for this 
+	 * value when subscribing, and then testing the version in an 
+	 * application-specific when the AdapterUp event is received, e.g. 
+	 * logging a WARN rather than failing entirely when there's a version 
+	 * mismatch, or checking the major.minor version only (to avoid failing 
+	 * when the fix version number is changed). 
+	 *
+	 * It is particularly important not to set the transportVersion filter 
+	 * for applications in a persistent Correlator, since a product or adapter 
+	 * upgrade that changes the fix version number is likely to prevent the 
+	 * application from working correctly (unless specific steps are taken to 
+	 * delete and reinject associated EPL as part of the upgrade). 
+	 *
+	 */
+	string transportVersion;
+	
+	/** Configuration version filter: in most cases, specify empty string ("") 
+	 * for this field. 
+	 *
+	 * If set to a non-empty string, this field indicates the precise 
+	 * configuration version that the client depends on, which will lead to a 
+	 * failed subscription attempt and an AdapterError event being sent to the 
+	 * client if the versions do not match exactly. 
+	 *
+	 * If the adapter specifies a CONFIG_VERSION in the status 
+	 * dictionary returned by getStatus(), the value of this field must either 
+	 * be the same or be an empty string (""); if the adapter transport does 
+	 * not specify a CONFIG_VERSION, this value must be an empty string.
+	 *
+	 * The reason that Apama now recommends this field should usually be empty 
+	 * is that most applications should implement a less simplistic policy 
+	 * for handling version mismatch by specifying an empty string for this 
+	 * value when subscribing, and then testing the version in an 
+	 * application-specific when the AdapterUp event is received, e.g. 
+	 * logging a WARN rather than failing entirely when there's a version 
+	 * mismatch, or checking the major.minor version only (to avoid failing 
+	 * when the fix version number is changed). 
+	 *
+	 * It is particularly important not to set the configVersion filter 
+	 * for applications in a persistent Correlator, since a product or adapter 
+	 * upgrade that changes the fix version number is likely to prevent the 
+	 * application from working correctly (unless specific steps are taken to 
+	 * delete and reinject associated EPL as part of the upgrade). 
+	 */
+	string configVersion;
+	
+	/** The name of the channel the IAF adapter is receiving events from. 
+	 */
+	string channel;
+}
+
+/**
+ * Sent by a client monitor to the IAFStatusManager, to remove its 
+ * subscription to status events for a particular adapter.
+ */
+event AdapterStatusDeregister {
+	/** The identifier used to refer to this transport and codec 
+	 * pair when registering, deregistering or monitoring adapter status. 
+	 */
+	string adapterName;
+}
+
+// Output events
+
+/** 
+ * Notifies registered clients that the specified adapter process is 
+ * running.
+ */
+event AdapterUp {
+	/** The identifier used to refer to this transport and codec 
+	 * pair when registering, deregistering or monitoring adapter status. 
+	 */
+	string adapterName;
+	
+	/** The difference (in seconds) between the time a request for status was 
+	 * sent from the IAFStatusManager to the IAF and the time the response 
+	 * was received.
+	 */
+	float latency;
+	
+	/** Information about the codec's status, which may including version  
+	 * and connection information. Standard keys are VERSION, CONFIG_VERSION, 
+	 * and CONNECTION (or in the case of multiple connections, keys of the 
+	 * form CONNECTION_connectionName).
+	 */
+	dictionary<string, string> codecStatus;
+
+	/** Information about the transport's status, which may including version 
+	 * and connection information. Standard keys are VERSION, CONFIG_VERSION, 
+	 * and CONNECTION (or in the case of multiple connections, keys of the 
+	 * form CONNECTION_connectionName).
+	 */
+	dictionary<string, string> transportStatus;
+}
+
+/** 
+ * Notifies registered clients that there is a problem with this subscription, 
+ * such as a mismatch between the subscribed version and the version reported 
+ * by the running transport/codec, or a timeout waiting for status information 
+ * from the adapter. 
+ */
+event AdapterError {
+	/** The identifier used to refer to this transport and codec 
+	 * pair when registering, deregistering or monitoring adapter status. 
+	 */
+	string adapterName;
+	
+	/** A free-form string describing the problem.
+	 */
+	string description;
+}
+
+/** 
+ * Notifies registered clients that a connection between the adapter and the 
+ * external system it communicates with has been closed.  
+ */
+event ConnectionClosed {
+	/** The identifier used to refer to this transport and codec 
+	 * pair when registering, deregistering or monitoring adapter status. 
+	 */
+	string adapterName;
+	
+	/**
+	 * A unique identifier for the connection.
+	 * 
+	 * If the adapter manages more than 
+	 * one connection, this will be the connection name returned by the adapter 
+	 * as a "CONNECTION_connectionName" getStatus() key (but without the 
+	 * "CONNECTION_" prefix), or "" if the adapter only manages one connection. 
+	 * The connectionName is often a number but could be a string. 
+	 * One event will be sent for each connection the adapter manages.
+	 */
+	string connectionName;
+	
+	/** 
+	  * Connection generation identifier.
+	  * 
+	  * This uniquely identifies a successful  
+	  * connection attempt for the connectionName connection. 
+	  * If the connection fails, and then is successfully connected again, this
+	  * will change.  The connectionGeneration is often a number that is
+	  * initialized with a timestamp when the adapter is created, then
+	  * incremented every time it reconnects.
+	  *
+	  */
+	string connectionGeneration;
+}
+
+/** 
+* Notifies registered clients that a connection between the adapter and the 
+* external system it communicates with has been successfully established.  
+*/
+event ConnectionOpened {
+	/** The identifier used to refer to this transport and codec 
+	 * pair when registering, deregistering or monitoring adapter status. 
+	 */
+	string adapterName;
+	
+	/**
+	 * A unique identifier for the connection. 
+	 * 
+	 * If the adapter manages more than 
+	 * one connection, this will be the connection name returned by the adapter 
+	 * as a "CONNECTION_connectionName" getStatus() key (but without the 
+	 * "CONNECTION_" prefix), or "" if the adapter only manages one connection. 
+	 * The connectionName is often a number but could be a string. 
+	 * One event will be sent for each connection the adapter manages.
+	 */
+	string connectionName;
+	
+	/** 
+	  * Connection generation identifier.
+	  *
+	  * This uniquely identifies a successful  
+	  * connection attempt for the connectionName connection. If the connection 
+	  * fails, and then is successfully connected again, this will change. 
+	  * The connectionGeneration is often a number that is initialized with a 
+	  * timestamp when the adapter is created, then incremented every time it 
+	  * reconnects.
+	  */
+	string connectionGeneration;
+}
+
+// -----------------------------------------------------------------------------
+// Internal Interface - The following events are used for communication between 
+// the IAFStatusManager and the IAF. Not for use by adapter or application 
+// developers. 
+// -----------------------------------------------------------------------------
+
+/** An internal event sent from the IAFStatusManager to the IAF.
+ * @private
+ */
+event IAFStatusRequest_1 {
+	integer id;
+	string codec;
+	string transport;
+}
+
+/** An internal event sent from the IAF to the IAFStatusManager. 
+ * @private
+ */
+event IAFStatusResponse_1 {
+	integer id;
+	integer maxIAFStatusVersion;
+	integer iafPort;
+	string configName;
+	string codecName;
+	string transportName;
+	boolean running;
+	boolean restarted;
+	dictionary<string, string> codecStatus;
+	dictionary<string, string> transportStatus;
+}
+
+
+//-----------------------------------------------------------------------------
+// Adapter Notification Interface - The following events are used for 
+// communication between the IAFStatusManager and a transport and codec running 
+// inside the IAF.
+//-----------------------------------------------------------------------------
+
+// Transport/Codec -> IAFStatusManager
+
+/** 
+* Sent by a transport/codec running inside the IAF to notify the 
+* IAFStatusManager that a connection to the external system the adapter 
+* communicates with has been closed. 
+*
+* This is optional, and may be used to provide a way for IAFStatusManager 
+* clients to be notified immediately about connectivity changes, without 
+* waiting for the IAFStatusManager to poll the adapter for status.
+* If the adapter sends this event, all fields must be consistent with the 
+* values provided in the adapter's getStatus() implementations.
+*/
+event AdapterConnectionClosed {
+	/** The name of the adapter's codec as it is specified in the adapter
+	 * configuration file.
+	 */
+	string codecName;
+	
+	/** The name of the adapter's transport as it is specified in the adapter
+	 * configuration file.
+	 */
+	string transportName;
+	
+	/**
+	 * A unique identifier for the connection.
+	 * 
+	 * If the adapter manages more than 
+	 * one connection, this should be the same as the connection name returned 
+	 * by the adapter as a "CONNECTION_connectionName" key from getStatus() 
+	 * (but without the "CONNECTION_" prefix), or "" if the adapter only 
+	 * manages one connection. 
+	 *
+	 * The connectionName is often a number but could be a string. 
+	 * One event should be sent for each connection the adapter manages.
+	 */
+	string connectionName;
+	
+	/** 
+	  * Connection generation identifier.
+	  *
+	  * This uniquely identifies a successful  
+	  * connection attempt for the connectionName connection. If the connection 
+	  * fails, and then is successfully connected again, this will change. 
+	  * The connectionGeneration is often a number that is initialized with a 
+	  * timestamp when the adapter is created, then incremented every time it 
+	  * reconnects.
+	  */
+	string connectionGeneration;
+}
+
+/** 
+* Sent by a transport/codec running inside the IAF to notify the 
+* IAFStatusManager that a connection to the external system the adapter 
+* communicates with has been successfully established. 
+*
+* This is optional, and may be used to provide a way for IAFStatusManager 
+* clients to be notified immediately about connectivity changes, without 
+* waiting for the IAFStatusManager to poll the adapter for status. 
+* If the adapter sends this event, all fields must be consistent with the 
+* values provided in the adapter's getStatus() implementations.
+*/
+event AdapterConnectionOpened {
+	/** The name of the adapter's codec as it is specified in the adapter
+	 * configuration file.
+	 */
+	string codecName;
+	
+	/** The name of the adapter's transport as it is specified in the adapter
+	 * configuration file.
+	 */
+	string transportName;
+
+	/**
+	 * A unique identifier for the connection.
+	 *
+	 * If the adapter manages more than 
+	 * one connection, this should be the same as the connection name returned 
+	 * by the adapter as a "CONNECTION_connectionName" key from getStatus() 
+	 * (but without the "CONNECTION_" prefix), or "" if the adapter only 
+	 * manages one connection. 
+	 *
+	 * The connectionName is often a number but could be a string. 
+	 * One event should be sent for each connection the adapter manages.
+	 */
+	string connectionName;
+	
+	/** 
+	  * Connection generation identifier. 
+	  *
+	  * This uniquely identifies a successful  
+	  * connection attempt for the connectionName connection. If the connection 
+	  * fails, and then is successfully connected again, this will change. 
+	  * The connectionGeneration is often a number that is initialized with a 
+	  * timestamp when the adapter is created, then incremented every time it 
+	  * reconnects.
+	  */
+	string connectionGeneration;
+}
+
+/**
+ * The IAFStatusManager allows interested monitors to register for 
+ * status updates from adapters. 
+ *
+ * All registered adapters are polled for status information every few seconds, 
+ * and in addition adapters may also send asynchronous notifications of 
+ * connection changes to the IAFStatusManager if desired. The 
+ * IAFStatusManager maintains status information for all registered 
+ * adapters, and passes this on to registered clients whenever an adapter or 
+ * any of its connections changes state.
+ *
+ * @routes AdapterUp, AdapterError, ConnectionClosed, ConnectionOpened
+ * @listens AdapterStatusRegister, AdapterStatusDeregister
+ *   IAFStatusResponse_1, AdapterConnectionClosed, AdapterConnectionOpened
+ * @sends IAFStatusRequest_1
+ */
+monitor IAFStatusManager
+{
+	event ProcessConnectionsOpened {
+		string codec;
+		string transport;
+	}
+	AdapterStatusRegister subscribe;
+	AdapterStatusRegister firstSubscription;
+	AdapterStatusDeregister unsubscribe;
+	AdapterConnectionClosed adapterConnClosed;
+	AdapterConnectionOpened adapterConnOpened;
+	dictionary<string, IAFStatusResponse_1> cachedAdapterStatus;
+	IAFStatusResponse_1 adapterStatus;
+	dictionary<string, ConnectionClosed> connClosed;
+	dictionary<string, ConnectionOpened> connOpened;
+	dictionary<string, integer> subscriptions;
+	dictionary<string, listener> unsubscriptionListeners;
+	dictionary<string, integer> channels;
+	string codec;
+	string transport;
+	AdapterUp lastUpStatus;
+	float IAF_STATUS_REQUEST_TIMEOUT := 5.0;
+	integer lastResponseId := 0;
+	integer currentRequestId := 0;
+	integer currentResponseId := 0;
+	float currentRequestTime := 0.0;
+	float currentResponseTime := 0.0;
+	boolean currentlyRunning:=false;
+	boolean statusKnown:=false;
+	string status:="";
+
+	action onload() {
+		// spawn this monitor to start handling status information for this adapter
+		on all unmatched AdapterStatusRegister() : subscribe spawn startStatusHandler();
+	}
+	
+	// main entry point 	
+	action startStatusHandler()
+	{
+		codec := subscribe.codec;
+		transport := subscribe.transport;
+		firstSubscription := subscribe;		
+		connClosed := new dictionary<string, ConnectionClosed>;
+		connOpened := new dictionary<string, ConnectionOpened>;
+		
+		// add the subscription
+		addSubscription();
+					
+		// listen for any additional subscriptions for this adapter
+		on all AdapterStatusRegister(codec=subscribe.codec, transport=subscribe.transport) : subscribe
+		{
+			addSubscription();
+			rerouteStatus(subscribe.adapterName);
+		}
+				
+		// listen for IAFStatusResponse_1 for this adapter
+		on all IAFStatusResponse_1(codecName=codec, transportName=transport) : adapterStatus
+		{
+			currentResponseTime := currentTime;
+			currentResponseId := adapterStatus.id;
+
+			processStatusUpdate();
+		}
+			
+		on all AdapterConnectionClosed(codecName=codec, transportName=transport) : adapterConnClosed
+		{
+			processClosedConnection();
+		}
+
+		on all AdapterConnectionOpened(codecName=codec, transportName=transport) : adapterConnOpened
+		{
+			processOpenedConnection();
+		}
+		
+		on all wait(IAF_STATUS_REQUEST_TIMEOUT)
+		{
+			sendStatusRequest();
+		}
+		
+		sendStatusRequest();	
+	}
+		
+	action addSubscription()
+	{
+		// add it to the list of subscription for this adapter
+		if not subscriptions.hasKey(subscribe.adapterName) then {
+			subscriptions.add(subscribe.adapterName, 1);
+			// listen for RemoveAdapterSubscription
+			listener l:=on all AdapterStatusDeregister(adapterName=subscribe.adapterName) : unsubscribe
+			{
+				removeSubscription();
+			}
+			unsubscriptionListeners.add(subscribe.adapterName, l);
+		} else {
+			subscriptions[subscribe.adapterName] := subscriptions[subscribe.adapterName] + 1;
+		}
+		if not channels.hasKey(subscribe.channel) then {
+			channels.add(subscribe.channel, 1);
+		} else {
+			channels[subscribe.channel]:=channels[subscribe.channel] +1;
+		}
+		firstSubscription.codecVersion := handleSubscribeVersion(subscribe.codecVersion, firstSubscription.codecVersion);
+		firstSubscription.transportVersion := handleSubscribeVersion(subscribe.transportVersion, firstSubscription.transportVersion);
+		firstSubscription.configVersion := handleSubscribeVersion(subscribe.configVersion, firstSubscription.configVersion);
+		if (cachedAdapterStatus.hasKey(subscribe.adapterName)) then 
+		{ 
+			sendAdapterStatus(subscribe.adapterName, cachedAdapterStatus[subscribe.adapterName]); 
+		}
+	}
+
+	action handleSubscribeVersion(string newVersion, string oldVersion) returns string {
+		// handle subscription where old and new may differ. The idea is 
+		// to use the version that has a value, unless both do, in which
+		// case it is an error to not use the latest version.
+		if newVersion = "" then {
+			return oldVersion;
+		}
+		if oldVersion = "" then {
+			return newVersion;
+		}
+		if oldVersion != newVersion then {
+			string msg := "Incompatible version number - subscription with " + subscribe.transportVersion + " and previously subscribed with " + firstSubscription.transportVersion + " for Adapter: " + subscribe.adapterName;
+			log msg at ERROR;
+			route AdapterError(subscribe.adapterName, msg);
+			if statusKnown and currentlyRunning then {
+				lastUpStatus.adapterName:=subscribe.adapterName;
+				route lastUpStatus;
+			}
+		}			
+		return oldVersion;
+	}
+
+	action removeSubscription()
+	{
+		if subscriptions.hasKey(unsubscribe.adapterName) then {
+			if subscriptions[unsubscribe.adapterName]=1 then {
+				subscriptions.remove(unsubscribe.adapterName);
+				unsubscriptionListeners[unsubscribe.adapterName].quit();
+				unsubscriptionListeners.remove(unsubscribe.adapterName);
+			} else {
+				subscriptions[unsubscribe.adapterName] := subscriptions[unsubscribe.adapterName] - 1;
+			}   			
+		} else {
+			log "Internal error: Received an unsubscribe for an unsubscribed adapter name" at ERROR;
+		}
+		// if the number of subscriptions is zero then terminate this monitor
+		if (subscriptions.size() = 0) then
+		{
+			die;
+		}
+	}
+
+	action processStatusUpdate()
+	{
+		string adapterName;
+		boolean errorOccured := false;
+
+		for adapterName in subscriptions.keys()
+		{
+			// check the codec status versions
+			if (adapterStatus.codecStatus.hasKey("VERSION") and
+			    firstSubscription.codecVersion != "" and 
+			    firstSubscription.codecVersion != adapterStatus.codecStatus["VERSION"]) then 
+			{
+				status:="Adapter " + adapterStatus.codecStatus["VERSION"] 
+					+ " and subscription codec " + firstSubscription.codecVersion 
+					+ " version mismatch for Adapter: " + adapterName;
+				log status at ERROR;
+				route AdapterError(adapterName, status);
+				errorOccured := true;
+			}
+
+			// check the transport status versions
+			if (adapterStatus.transportStatus.hasKey("VERSION") and
+			    firstSubscription.transportVersion != "" and
+			    firstSubscription.transportVersion != adapterStatus.transportStatus["VERSION"]) then
+			{
+				status:="Adapter " + adapterStatus.transportStatus["VERSION"] 
+					+ " and subscription transport " + firstSubscription.transportVersion
+					+ " version mismatch for Adapter: " + adapterName;
+				log status at ERROR;
+				route AdapterError(adapterName, status);
+				errorOccured := true;
+			}
+
+			// check the codec config version
+			if (adapterStatus.codecStatus.hasKey("CONFIG_VERSION") and
+			    firstSubscription.configVersion != "" and 
+			    firstSubscription.configVersion != adapterStatus.codecStatus["CONFIG_VERSION"]) then
+			{
+				status:="Adapter " + adapterStatus.codecStatus["CONFIG_VERSION"]
+						 + " and subscription config " + firstSubscription.configVersion
+						 + " version mismatch for Adapter: " + adapterName;
+				log status at ERROR;
+				route AdapterError(adapterName, status);
+				errorOccured := true;
+			}
+				
+			// check the transport config version
+			if (adapterStatus.transportStatus.hasKey("CONFIG_VERSION") and
+			    firstSubscription.configVersion != "" and 
+			    firstSubscription.configVersion != adapterStatus.transportStatus["CONFIG_VERSION"]) then
+			{
+				status:="Adapter " + adapterStatus.transportStatus["CONFIG_VERSION"]
+						 + " and subscription config " + firstSubscription.configVersion
+						 + " version mismatch for Adapter: " + adapterName;
+				log status at ERROR;
+				route AdapterError(adapterName, status);
+				errorOccured := true;
+			}
+
+			currentlyRunning:=false;
+			statusKnown := true;
+			if not errorOccured then
+			{
+				currentlyRunning:=adapterStatus.running;
+				// check to see if the adapter is running
+				if (adapterStatus.running) then
+				{
+					if not cachedAdapterStatus.hasKey(adapterName) then
+					{
+						cachedAdapterStatus[adapterName] := adapterStatus;
+						sendAdapterStatus(adapterName, adapterStatus);
+					}
+					else if not checkStatus(cachedAdapterStatus[adapterName], adapterStatus) then
+					{
+						cachedAdapterStatus[adapterName] := adapterStatus;
+						sendAdapterStatus(adapterName, adapterStatus);
+					}
+				}
+				else
+				{
+					status:="Adapter is not running";
+					route AdapterError(adapterName, status);
+				}
+			}
+			
+		}
+		updateConnectionStatus();   			
+	}
+
+	action checkStatus(IAFStatusResponse_1 a, IAFStatusResponse_1 b) returns boolean
+	{
+		string k;
+		if not (a.id = b.id) then { return false; }
+		if not (a.maxIAFStatusVersion = b.maxIAFStatusVersion) then { return false; }
+		if not (a.iafPort = b.iafPort) then { return false; }
+		if not (a.configName = b.configName) then { return false; }
+		if not (a.codecName = b.codecName) then { return false; }
+		if not (a.transportName = b.transportName) then { return false; }
+		if not (a.running = b.running) then { return false; }
+		if not (a.restarted = b.restarted) then { return false; }
+		for k in a.codecStatus.keys() {
+			if not b.codecStatus.hasKey(k) then { return false; }
+			if not b.codecStatus[k] = a.codecStatus[k] then { return false; }
+		}
+		for k in a.transportStatus.keys() {
+			if not b.transportStatus.hasKey(k) then { return false; }
+			if not b.transportStatus[k] = a.transportStatus[k] then { return false; }
+		}
+		return true;
+	}
+	
+	action sendAdapterStatus(string name, IAFStatusResponse_1 status)
+	{
+		float latency := currentResponseTime - currentRequestTime;
+		lastUpStatus:=AdapterUp(name,latency, 
+						 status.codecStatus, 
+						 status.transportStatus);
+		route lastUpStatus;
+	}
+	
+	action processClosedConnection()
+	{
+		boolean ignoreThisEvent := false;
+		
+		if not currentlyRunning then {
+			// If adapter is not running i.e. AdapterUp event was not sent 
+			// previously then ignore this event.
+			// Connection status will be updated when sending next AdapterUp event
+			ignoreThisEvent := true;
+		}
+		// check to see if this is was a new connection
+		else if (not connClosed.hasKey(adapterConnClosed.connectionName)) then
+		{
+			// ok, this is a new event so we can bypass all the other checks
+			// The code to send the ConnectionClosed is sent at the end
+			// of this action block.
+		}
+		// check to see if we already handled this connection closed event
+		else if (connClosed[adapterConnClosed.connectionName].connectionGeneration = 
+			     adapterConnClosed.connectionGeneration) then
+		{
+			// do nothing; we already handled this event
+			ignoreThisEvent := true;
+		}
+		// check to see if there is a corresponding open event for this close
+		else if (not connOpened.hasKey(adapterConnClosed.connectionName)) then
+		{
+			string adapterName;
+			for adapterName in subscriptions.keys()
+			{
+				ConnectionOpened co := ConnectionOpened(adapterName, 
+														 adapterConnClosed.connectionName, 
+													     adapterConnClosed.connectionGeneration);
+				route co;
+				connOpened[co.connectionName] := co;
+			}
+		}
+		// check to see if there was this close matches the previous open
+		else if (connOpened[adapterConnClosed.connectionName].connectionGeneration != 
+				 adapterConnClosed.connectionGeneration) then
+		{
+			string adapterName;
+			for adapterName in subscriptions.keys()
+			{
+				// first notify the close of the previous open connection
+				route ConnectionClosed(adapterName, 
+									   adapterConnClosed.connectionName, 
+									   connOpened[adapterConnClosed.connectionName].connectionGeneration);
+				
+				// now notify the open of the currently closing connection
+				ConnectionOpened co := ConnectionOpened(adapterName, 
+														adapterConnClosed.connectionName, 
+														adapterConnClosed.connectionGeneration);
+				route co;
+				connOpened[co.connectionName] := co;
+			}
+		}
+		
+		// Send the ConnectionClosed event
+		if (not ignoreThisEvent) then
+		{
+			string adapterName;
+			for adapterName in subscriptions.keys()
+			{
+				ConnectionClosed cc := ConnectionClosed(adapterName, 
+														adapterConnClosed.connectionName, 
+														adapterConnClosed.connectionGeneration);
+				route cc;
+				connClosed[cc.connectionName] := cc;  // we dont care about the adapterName
+			}
+		}
+		if connOpened.hasKey(adapterConnClosed.connectionName) then {
+			connOpened.remove(adapterConnClosed.connectionName);
+		}
+	}	   		
+	
+	action processOpenedConnection()
+	{
+		boolean ignoreThisEvent := false;
+		
+		if not currentlyRunning then {
+			// If adapter is not running i.e. AdapterUp event was not sent 
+			// previously then ignore this event.
+			// Connection status will be updated when sending next AdapterUp event
+			ignoreThisEvent := true;
+		}
+		// check to see if this is a a new connection
+		else if (not connOpened.hasKey(adapterConnOpened.connectionName)) then
+		{
+			// ok, this is a new event so we can bypass all the other checks
+			// The code to send the ConnectionOpened is sent at the end
+			// of this action block.
+		}
+		// check to see if we already handled this connection open event
+		else if (connOpened[adapterConnOpened.connectionName].connectionGeneration = 
+			     adapterConnOpened.connectionGeneration) then
+		{
+			// do nothing; we already handled this event
+			ignoreThisEvent := true;
+		}
+		// check to see if there is not a corresponding connection 
+		// closed for the previously opened connection - i.e. there
+		// is either no connection closed record, or the connection 
+		// closed record is of a different connectionGeneration.
+		else if ( not connClosed.hasKey(adapterConnOpened.connectionName) or
+			      (connOpened[adapterConnOpened.connectionName].connectionGeneration != 
+				   connClosed[adapterConnOpened.connectionName].connectionGeneration) ) then
+		{
+			string adapterName;
+			for adapterName in subscriptions.keys()
+			{
+				ConnectionClosed cc := ConnectionClosed(adapterName, 
+									adapterConnOpened.connectionName, 
+									connOpened[adapterConnOpened.connectionName].connectionGeneration);
+				route cc;
+				connClosed[cc.connectionName] := cc;
+			}
+		}
+		
+		// Send the AdapterConnectionOpened event
+		if (not ignoreThisEvent) then
+		{
+			string adapterName;
+			for adapterName in subscriptions.keys()
+			{
+				ConnectionOpened co := ConnectionOpened(adapterName, 
+														adapterConnOpened.connectionName, 
+														adapterConnOpened.connectionGeneration);
+				route co;
+				connOpened[co.connectionName] := co;  // we dont care about the adapterName
+			}
+		}
+		if connClosed.hasKey(adapterConnOpened.connectionName) then {
+			connClosed.remove(adapterConnOpened.connectionName);
+		}
+	}	   		
+
+	action updateConnectionStatus()
+	{
+		// Check each connection we know about, and close
+		// any that aren't mentioned in this status message.
+		string conn;
+		boolean connectionsClosed:=false;
+		for conn in connOpened.keys() {
+			string tsKey;
+			if conn="" then {
+				tsKey:="CONNECTION";
+			} else {
+				tsKey:="CONNECTION_"+conn;
+			}
+			if (not adapterStatus.transportStatus.hasKey(tsKey) or adapterStatus.transportStatus[tsKey] != connOpened[conn].connectionGeneration) and
+				not connClosed.hasKey(conn) then {
+				route AdapterConnectionClosed(adapterStatus.codecName,
+							      adapterStatus.transportName,
+							      conn,
+							      connOpened[conn].connectionGeneration);
+				connectionsClosed:=true;
+			}
+		}
+		if connectionsClosed then {
+			route ProcessConnectionsOpened(codec, transport);
+			IAFStatusResponse_1 localStatus:=adapterStatus;
+			on ProcessConnectionsOpened(codec, transport) {
+				updateConnectionsOpened(localStatus);
+			}				
+			return;
+		} else {
+			updateConnectionsOpened(adapterStatus);
+		}
+	}
+	
+	action updateConnectionsOpened(IAFStatusResponse_1 adapterStatus) {
+		// check to see if the "CONNECTION" exists in the transportStatus of the
+		// IAFStatusResponse_1 event
+		if (adapterStatus.transportStatus.hasKey("CONNECTION")) then
+		{
+			// if this is a new connection or the connection has changed then route
+			// an AdapterConnectionOpened event.  This event reuses the logic in processOpenedConnection
+			string connection:="";
+			if ( (not connOpened.hasKey(connection)) ) then
+			{
+				route AdapterConnectionOpened(adapterStatus.codecName,
+											  adapterStatus.transportName,
+											  "",
+											  adapterStatus.transportStatus["CONNECTION"]);
+			}
+		}
+		else
+		{
+			// check to see if this is an adapter that supports multiple connections
+			// i.e. the connection names start with "CONNECTION_"
+			string tsKey;
+			integer connKeyLength := "CONNECTION_".length();
+			for tsKey in adapterStatus.transportStatus.keys()
+			{
+				if (tsKey.length()> connKeyLength and tsKey.substring(0, connKeyLength) = "CONNECTION_") then
+				{
+					string connection:=tsKey.substring(connKeyLength, tsKey.length());
+					// if this is a new connection or the connection has changed then route
+					// an AdapterConnectionOpened event.  This event reuses the logic in processOpenedConnection
+					if ( (not connOpened.hasKey(connection)) ) then
+					{
+						route AdapterConnectionOpened(adapterStatus.codecName,
+													  adapterStatus.transportName,
+													  connection,
+													  adapterStatus.transportStatus[tsKey]);
+					}
+				}
+			}
+		}
+	}
+
+	action sendStatusRequest()
+	{
+		currentRequestTime := currentTime;
+		// check for timeouts
+		// also consider currentResponseTime to determine timeout to avoid state fluctuations 
+		if (currentRequestId - currentResponseId) > 3 and (currentRequestTime - currentResponseTime) > 15.0 then
+		{
+			status:="Status request timed out";
+			currentlyRunning:=false;
+			statusKnown:=true;
+			string adapterName;
+			for adapterName in subscriptions.keys() {
+				route AdapterError(adapterName, status);
+			}
+		}
+	
+		// increment the request id
+		currentRequestId := currentRequestId + 1;
+				
+		// send the status request to all the collected channels
+		string channel;
+		for channel in channels.keys()
+		{			
+			send IAFStatusRequest_1(currentRequestId, codec, transport) to channel;
+		}
+	}
+
+	action rerouteStatus(string adapterName)
+	{
+		if statusKnown then {
+			if currentlyRunning then {
+				lastUpStatus.adapterName:=adapterName;
+				route lastUpStatus;
+			} else {
+				route AdapterError(adapterName, status);
+			}
+		}
+	}
+}
+ 0000003a C:\SoftwareAG\Apama\adapters\monitors\IAFStatusManager.mon
+CONN 0000003c 6321095548145241858:6320814073168531202 from 127.0.0.1:50602
+TIME 0000000e 1471744745.2,1
+TIME 0000000e 1471744745.3,1
+MONF 0000249a /* 
+ * This file provides a MonitorScript interface for writing log messages to 
+ * file using the LoggingManager plugin. 
+ *
+ * We do not recommend using LoggingManager for new applications. Instead, 
+ * use the Correlator's built-in 'log "message" at LEVEL' syntax which is 
+ * considerably simpler and more efficient. 
+ *
+ * $Copyright(c) 2004-2010, 2013 Progress Software Corporation (PSC). All rights reserved.$
+ * $Copyright (c) 2013, 2015 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.$
+ * Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG
+ *
+ */
+
+
+
+// event which informs the monitor to log a message at a set level
+//
+// level	: the verbosity level (FATAL, ERROR, WARN, INFO, DEBUG)
+// message	: the message to log
+//
+event LogEvent {
+	string level;	
+	string message;
+}
+
+
+
+// event to set the logfile name to write all messages. On receipt of this event
+// log file rotation is de-activated
+//
+// filename	: the full filename of the log file
+// append	: boolean flag to indicate if the log message should be appended
+//            to the file if it allready exists
+//
+event SetLogFile {
+	string filename;
+	boolean append;
+}
+
+
+
+// event to set the logfile name back to the default. On receipt of this event
+// the current log file will be closed and subsequent log messages will be sent
+// to the default log file (currently stdout). The current logging level is not
+// affected.
+//
+event SetDefaultLogFile {
+}
+
+
+
+// event to set a logfile to write all message, where log file rotation is activated
+//
+// filenameTemplate : The template name of the logfile. The template can contain 
+//                    standard keywords as supported by  SimpleDateFormat class
+//                    provided in the International Components for Unicode libraries
+//                    e.g. HH, dd, mm, yyyy for hour of day, day of month, month of 
+//                    year or year respectively, for more info refer to Format
+//                    Specification for the TimeFormat Plug-in Functions
+// useInternalTime  : set to true to use the correlator internal time, not the system 
+//                    time, when creating the logfile name
+// append           : boolean flag to indicate if the log message should be appended
+//                    to the file if it allready exists
+// rotatePeriod	    : integer value used to indicate the periodicity of the rotation
+//                    1=hourly, 2=daily, 3=weekly, 4=monthly
+// rotateHour       : the hour to perform a rotation
+// rotateMinute     : the minute to perform a rotation
+//
+event SetLogRotating {
+	string filenameTemplate;
+	boolean useInternalTime;
+	boolean append;
+	integer rotatePeriod;		
+	integer rotateHour;
+	integer rotateMinute;
+}
+
+
+
+// event used to set logfile rotation to daily (00:00) using the default 
+// filename template
+//
+event SetLogRotatingDaily {
+}
+
+
+
+// event to set the log level of the logger. Only messages with a verbosity equal or
+// higher to the level are logged
+//
+// level	: the verbosity level (FATAL, ERROR, WARN, INFO, DEBUG)
+//
+event SetLogLevel {
+	string level;
+}
+
+
+
+// event to set the text format to log messages - supported formats are 
+// normal or comma separated values (csv)
+//
+// format	: the format identifier ("normal" or "csv")
+//
+event SetLogFormat {
+	string format;
+}
+
+
+
+// the monitor body
+//
+monitor LoggingManager {
+	import "LoggingPlugin" as logger;	
+	import "TimeFormatPlugin" as timeFormat;
+	
+	LogEvent logEvent;
+	SetLogLevel setLogLevel;
+	SetLogFile setLogFile;
+	SetLogRotating setLogRotating;
+	SetLogFormat setLogFormat;
+	chunk file;
+	boolean ret;
+	boolean working;
+
+	string currentFilename;
+	string currentLogLevel;
+	
+	listener fatalListener;
+	listener errorListener;
+	listener warnListener;
+	listener infoListener;
+	listener debugListener;
+	listener rotatingTimer;
+	
+
+	action onload() {
+		log "The Logging Manager is now deprecated - use the EPL \"log\" statement and the Logging interface from the Correlator Management bundle instead" at WARN;
+		
+		setLogLevel.level := "INFO";
+		setLogFormat.format := "normal";
+
+		setUpDefaultLogger();	
+		setUpLogLevel();
+		
+		on all SetLogFile(): setLogFile {
+			rotatingTimer.quit();
+			ret := logger.init(setLogFile.filename, setLogFile.append, file);
+			if (ret) then {
+				setUpDefaultLogger();
+			}
+			else {
+				ret := logger.setLevel(file, setLogLevel.level);
+				working := true;
+			}
+		}
+		
+		on all SetDefaultLogFile() {
+			setUpDefaultLogger();
+		}
+		
+		on all SetLogLevel(): setLogLevel {
+			setUpLogLevel();
+		}			
+		
+		on all SetLogFormat():setLogFormat {
+			if working then {
+				ret := logger.setFormat(file, setLogFormat.format);
+			}
+		}
+		
+		on all SetLogRotating():setLogRotating {
+			setUpRotating();
+		}
+
+		on all SetLogRotatingDaily() {
+			route SetLogRotating("correlator-'dd'-'MM'-'yyyy'.log", false, true, 2, 0, 0);
+		}
+	}
+
+	action setUpLogLevel() {
+		fatalListener.quit();
+		errorListener.quit();
+		warnListener.quit();
+		infoListener.quit();
+		debugListener.quit();
+		
+		if (setLogLevel.level = "DEBUG") then {
+			setupDebugListener();
+			setupInfoListener();
+			setupWarnListener();
+			setupErrorListener();
+			setupFatalListener();
+		}
+		else if (setLogLevel.level = "INFO") then {
+			setupInfoListener();
+			setupWarnListener();
+			setupErrorListener();
+			setupFatalListener();
+		}
+		else if (setLogLevel.level = "WARN") then {
+			setupWarnListener();
+			setupErrorListener();
+			setupFatalListener();
+		}
+		else if (setLogLevel.level = "ERROR") then {
+			setupErrorListener();
+			setupFatalListener();
+		}
+		else if (setLogLevel.level = "FATAL") then {
+			setupFatalListener();
+		}
+		else {
+			logger.error(file, "LoggingManager: Got an invalid SetLogLevel event: " +
+							   setLogLevel.toString());
+		}
+
+		if working then {
+			ret := logger.setLevel(file, setLogLevel.level);
+		}
+	
+	}
+
+	action setupFatalListener() {
+		fatalListener := on all LogEvent(level = "FATAL"): logEvent {
+			if working then {
+				logger.fatal(file, logEvent.message);
+			}
+			else {
+				print "[logger failed " + logEvent.level + "]: " + logEvent.message;
+			}
+		}
+	}
+
+	action setupErrorListener() {
+		errorListener := on all LogEvent(level = "ERROR"): logEvent {
+			if working then {
+				logger.error(file, logEvent.message);
+			}
+			else {
+				print "[logger failed " + logEvent.level + "]: " + logEvent.message;
+			}
+		}
+	}
+
+	action setupWarnListener() {
+		warnListener := on all LogEvent(level = "WARN"): logEvent {
+			if working then {
+				logger.warn(file, logEvent.message);
+			}
+			else {
+				print "[logger failed " + logEvent.level + "]: " + logEvent.message;
+			}
+		}
+	}
+
+	action setupInfoListener() {
+		infoListener := on all LogEvent(level = "INFO"): logEvent {
+			if working then {
+				logger.info(file, logEvent.message);
+			}
+			else {
+				print "[logger failed " + logEvent.level + "]: " + logEvent.message;
+			}
+		}
+	}
+
+	action setupDebugListener() {
+		debugListener := on all LogEvent(level = "DEBUG"): logEvent {
+			if working then {
+				logger.debug(file, logEvent.message);
+			}
+			else {
+				print "[logger failed " + logEvent.level + "]: " + logEvent.message;
+			}
+		}
+	}
+	
+	action setUpDefaultLogger() {
+		ret := logger.init("stdout", false, file);
+		working := not ret;	
+		if (working) then {
+			ret := logger.setLevel(file, setLogLevel.level);
+			ret := logger.setFormat(file, setLogFormat.format);
+		}
+	}
+	
+	action setUpRotating() {
+		rotatingTimer.quit();
+		rotateLog();
+
+		if(setLogRotating.rotatePeriod = 0) then {
+			rotatingTimer := on all at(*, *, *, *, *) rotateLog;
+		}
+		else {
+			if(setLogRotating.rotatePeriod = 1) then { 
+				rotatingTimer := on all at(setLogRotating.rotateMinute, *, *, *, *) rotateLog;
+			}
+			else {
+				if(setLogRotating.rotatePeriod = 2) then { 
+					rotatingTimer := on all at(setLogRotating.rotateMinute, 
+											   setLogRotating.rotateHour, 
+											   *, *, *) rotateLog;
+				}
+				else {
+					if(setLogRotating.rotatePeriod = 3) then { 
+						rotatingTimer := on all at(setLogRotating.rotateMinute, 
+												   setLogRotating.rotateHour, 
+												   *, *, 0) rotateLog;
+					}
+					else {
+						if(setLogRotating.rotatePeriod = 4) then { 
+							rotatingTimer := on all at(setLogRotating.rotateMinute, 
+													   setLogRotating.rotateHour, 
+													   1, *, *) rotateLog;
+						}
+						else {
+							working := false;
+						}
+					}
+				}
+			}
+		}
+	}
+		
+	action rotateLog() {
+		string filename;
+		float timeNow := timeFormat.getTime();
+
+		if setLogRotating.useInternalTime then {
+			timeNow := currentTime;
+		}
+		filename := timeFormat.format(timeNow, "'"+setLogRotating.filenameTemplate+"'");
+		
+		ret := logger.init(filename, setLogRotating.append, file);
+		if (ret) then {
+				setUpDefaultLogger();
+		}
+		else {
+			ret := logger.setLevel(file, setLogLevel.level);
+			ret := logger.setFormat(file, setLogFormat.format);
+			working := true;
+		}
+	}
+	
+	
+}
+
+ 0000002f C:\SoftwareAG\Apama\monitors\LoggingManager.mon
+TIME 0000000e 1471744745.7,1
+MONF 00003027 //*****************************************************************************
+// Title:       StatusSupport
+// Description: Provides event definitions for generic status reporting from  
+//              service monitors.
+//
+// Revision:    $Revision: 261655 $
+//
+// $Copyright(c) 2006-2007, 2008-2009, 2011-2012 Progress Software Corporation (PSC). All rights reserved.$
+// $Copyright (c) 2013-2015 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.$
+// Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG
+//
+//*****************************************************************************
+
+package com.apama.statusreport;
+
+/*
+	The events defined in this file act as an API between applications
+	or blocks and service monitors.  They provide functionality to 
+	Subscribe to status messages.
+	
+	The aim of this API is to provide an abstraction over any adapter
+	specific details - for example, some adapters may require an explicit 
+	call to subscribe to such data, some may be sent it anyway.
+	
+	Any adapter specific information that the application needs to supply
+	or be supplied can be passed in the extraParams dictionary - these 
+	are free-form (though there are conventions on the keys, see below).
+	
+	The service monitor also needs to handle any session initiation that
+	may be required.
+	
+	A Status event does not denote a change of state, merely what the current
+	state is - in particular, one will be sent out after every 
+	SubscribeStatus request.
+
+	All operations and responses are keyed on serviceId (if non-blank), 
+	object,	connection and subServiceID. Every event starts with these 4 
+	fields.
+	
+*/
+
+
+/**
+ *	Sent to the SubscribeStatus chanenl to subscribe to status.
+ *	
+ */
+event SubscribeStatus {
+	constant string CHANNEL := "SubscribeStatus";
+	/**
+	 *	service ID to subscribe to - blank will target all services.
+	 */
+	string serviceID;
+	
+	/**
+	 *	object to request status of - this may include:
+	 *	"Connection" - whether connected or not
+	 *	"Market" - a market may be "Open", "Closed", or other states
+	 */
+	string object;
+	
+	/**
+	 *	subService ID to subscribe to.
+	 *	Some services may expose several services.  The interpretation of
+	 *	this string is adapter-specific.
+	 */
+	string subServiceID;
+	
+	/**
+	 *	connection to subscribe to.
+	 *	Some services may expose several services.  The interpretation of
+	 *	this string is adapter-specific.
+	 */
+	string connection;
+}
+
+/**
+ *	Sent to the service monitor to unsubscribe from status.
+ *	
+ */
+event UnsubscribeStatus {	 
+	constant string CHANNEL := "SubscribeStatus";
+	/**
+	 *	service ID to subscribe to - blank will target all services
+	 */
+	string serviceID;
+	
+	/**
+	 *	object to request status of - this may include:
+	 *	"Connection" - whether connected or not
+	 *	"Market" - a market may be "Open", "Closed", or other states
+	 */
+	string object;
+	
+	/**
+	 *	subService ID to subscribe to.
+	 *	Some services may expose several services.  The interpretation of
+	 *	this string is adapter-specific.
+	 */
+	string subServiceID;
+	
+	/**
+	 *	connection to subscribe to.
+	 *	Some services may expose several services.  The interpretation of
+	 *	this string is adapter-specific.
+	 */
+	string connection;
+}
+
+
+/**
+ *	Sent from the service monitor to the StatusReport channel to notify the application of status for a 
+ *	subscribed item.
+ *	
+ */
+event Status {	
+	constant string CHANNEL := "StatusReport";
+	/**
+	 *	service ID to subscribe to - blank will target all services
+	 */
+	string serviceID;
+	
+	/**
+	 *	object to request status of - this may include:
+	 *	"Connection" - whether connected or not
+	 *	"MarketState" - a market may be "Open", "Closed", or other states
+	 */
+	string object;
+	
+	/**
+	 *	subService ID to subscribe to.
+	 *	Some services may expose several services.  The interpretation of
+	 *	this string is adapter-specific.
+	 */
+	string subServiceID;
+	
+	/**
+	 *	connection to subscribe to.
+	 *	Some services may expose several services.  The interpretation of
+	 *	this string is adapter-specific.
+	 */
+	string connection;
+
+	/**
+	 *	status description.
+	 *	A free-form text string giving a description of the status.
+	 */
+	string description;
+	
+	/**
+	 *	A sequence of summary strings specifying information about the 
+	 *	status of the specified object.  This will be a well recognized
+	 *	sequence of words - for example, a financial market's
+	 *	"MarketState" may be "Open", "Closed", "PreOpen", etc.  A Connection 
+	 *	may be "Connected", "Disconnected", "Disconnected LoginFailed", 
+	 *	"Disconnected TimedOut", etc. 
+	 */
+	sequence<string> summaries;
+
+	/**
+	 *	available.
+	 *	True if the object is "available" - the exact meaning is adapter 
+	 * 	specific; for example, connected, open for general orders, etc.
+	 */
+	 boolean available;
+	 
+	 /** 
+	 *	extra parameters that do not map into any of the above.  Convention
+	 *	is that keys are in TitleCase.  e.g. "Username", "CloseTime", etc.
+	 */
+	wildcard dictionary <string, string> extraParams;
+}
+
+
+event StatusError {
+	constant string CHANNEL := "StatusReport";
+	/**
+	 *	service ID to subscribe to - blank will target all services
+	 */
+	string serviceID;
+	
+	/**
+	 *	object to request status of - this may include:
+	 *	"Connection" - whether connected or not
+	 *	"MarketState" - a market may be "Open", "Closed", or other states
+	 */
+	string object;
+	
+	/**
+	 *	subService ID to subscribe to.
+	 *	Some services may expose several services.  The interpretation of
+	 *	this string is adapter-specific.
+	 */
+	string subServiceID;
+	
+	/**
+	 *	connection to subscribe to.
+	 *	Some services may expose several services.  The interpretation of
+	 *	this string is adapter-specific.
+	 */
+	string connection;
+
+	/**
+	 *	status description.
+	 *	A free-form text string giving a description of the status.
+	 */
+	string description;
+	
+	/**
+	 *	Whether the subscription has been terminated.  Any subscribers will 
+	 *	need to send a new SubscribeStatus request after this.
+	 */
+	boolean failed;
+}
+	
+//*****************************************************************************
+// Title:         ParallelStatusSupport
+// Description:   ParallelStatusSupport description
+// Dependencies:  None
+// Author:        arrustem
+//
+//*****************************************************************************
+
+/*
+	Event definitions for block subject event wrappers;
+	These are provided for backwards compatibility.  Monitors listening to status should instead subscribe to the "StatusReport" channel.
+*/
+event SubscribeStatusToContext {
+	context instanceContext;
+	SubscribeStatus subscribe;
+}
+
+event UnsubscribeStatusToContext {
+	context instanceContext;
+	UnsubscribeStatus unsubscribe;
+}
+
+monitor ParallelStatusSupport {
+	/*	dictionary < [serviceId] , sequence of contexts > eventRouter;
+	 - eventRouter will keep track of all contexts that are listening to a particular symbol
+	 - The same d.s. will be used for both, Status and StatusError
+	   since they are added/removed precisely at the same time. 
+	*/
+	dictionary < string , sequence<context> > eventRouter;
+	
+	/*	dictionary < [serviceId], dictionary < [contextId], [key ctr] > > statusToContextCtr;
+	 - Keeps count of number of listeners for each symbol on each context
+	*/
+	dictionary < string, dictionary < integer, integer > > statusToContextCtr;
+
+	/*	dictionary < [serviceId], listener > statusListeners;
+	 - keeps track of the local listeners for Status
+		dictionary < [serviceId], listener > errorListeners;
+	 - keeps track of the local listeners for StatusError
+	*/
+	dictionary < string, listener > statusListeners;
+	dictionary < string, listener > errorListeners;
+	
+	action onload() {
+		monitor.subscribe("StatusReport");
+		// set up listeners for the wrapped events coming from subjects
+		SubscribeStatusToContext subscribe;
+		on all SubscribeStatusToContext():subscribe subscribeEventHandler(subscribe);
+		
+		UnsubscribeStatusToContext unsubscribe;
+		on all UnsubscribeStatusToContext():unsubscribe unsubscribeEventHandler(unsubscribe);
+	}
+	
+	action ondie() {
+                // print out an error if statusToContextCtr is not empty
+                if (statusToContextCtr.size() != 0) then {
+                        log "ParallelStatusSupport is terminating but there may still be contexts subscribed to Status events" at ERROR;
+                }
+                else {
+                        log "ParallelStatusSupport is terminating" at INFO;
+                }
+	}
+	
+	action onunload() {
+		// not doing anything here since it is assumed that only one instance of this monitor is executing 
+	}
+	
+	action subscribeEventHandler(SubscribeStatusToContext evt) {
+		
+		string key := evt.subscribe.serviceID;
+		integer cId := evt.instanceContext.getId();
+		
+		// manage statusToContextCtr
+		if not statusToContextCtr.hasKey(key) then {
+			dictionary <integer, integer> entry := {cId:0};
+			statusToContextCtr.add(key, entry);
+		}
+		else {
+			if not statusToContextCtr[key].hasKey(cId) then {
+				statusToContextCtr[key].add(cId, 0);
+				
+			}
+		}
+		statusToContextCtr[key][cId] := statusToContextCtr[key][cId] + 1;
+		
+		// manage eventRouter
+		if not eventRouter.hasKey(key) then {
+			sequence < context > entry := [];
+			eventRouter.add(key, entry);
+			addListener(key);
+		}
+		// look up context in the symbol
+		if (eventRouter[key].indexOf(evt.instanceContext) = -1) then {
+			eventRouter[key].append(evt.instanceContext);
+		}
+
+		route evt.subscribe;
+	}
+
+	action unsubscribeEventHandler(UnsubscribeStatusToContext evt) {
+		string key := evt.unsubscribe.serviceID;
+		
+		integer cId := evt.instanceContext.getId();
+		
+		// manage statusToContextCtr
+		if ((not statusToContextCtr.hasKey(key)) or 
+			(not statusToContextCtr[key].hasKey(cId))) then {
+			log "unsubscribeEventHandler: unexpected UnsubscribeStatusToContext received for (key=" + 
+				key.toString() + ", contextId=" + cId.toString() + ")" at WARN;
+		}
+		else {
+			statusToContextCtr[key][cId] := statusToContextCtr[key][cId] - 1;
+			if (statusToContextCtr[key][cId] = 0) then {
+				statusToContextCtr[key].remove(cId);
+				integer i := eventRouter[key].indexOf(evt.instanceContext);
+				if (i != -1) then {
+					eventRouter[key].remove(i);
+				}
+			}
+			if (statusToContextCtr[key].size() = 0) then {
+				eventRouter.remove(key);
+				removeListener(key);
+			}
+		}
+
+		route evt.unsubscribe;
+	}
+	
+	action addListener(string serviceID) {
+		listener dl, el;
+		context c;
+		Status d;
+		dl := on all Status(serviceID=serviceID):d {
+			//send d to eventRouter[serviceID];
+			for c in eventRouter[serviceID] {
+				if c.getId() != context.current().getId() then {
+					send d to c;
+				}
+			}			
+		}
+		if statusListeners.hasKey(serviceID) then {
+			log "[action addListener] statusListeners already contains a listener for entry " + serviceID at WARN;
+		}
+		else {
+			statusListeners.add(serviceID, dl);
+		}
+		
+		StatusError e;
+		el := on all StatusError(serviceID=serviceID):e {
+			//send e to eventRouter[serviceID];
+			for c in eventRouter[serviceID] {
+				if c.getId() != context.current().getId() then {
+					send e to c;
+				}
+			}
+		}
+		if errorListeners.hasKey(serviceID) then {
+			log "[action addListener] errorListeners already contains a listener for entry " + serviceID at WARN;
+		}
+		else {
+			errorListeners.add(serviceID, el);
+		}
+	}
+	
+	action removeListener(string serviceID) {
+
+		if statusListeners.hasKey(serviceID) then {
+			statusListeners[serviceID].quit();
+			statusListeners.remove(serviceID);
+		}
+		else {
+			log "[action removeListener] statusListeners does not contain a listener for entry " + serviceID at WARN;			
+		}
+		
+		if errorListeners.hasKey(serviceID) then {
+			errorListeners[serviceID].quit();
+			errorListeners.remove(serviceID);
+		}
+		else {
+			log "[action removeListener] errorListeners does not contain a listener for entry " + serviceID at WARN;			
+		}
+	}
+}
+
+ 0000002e C:\SoftwareAG\Apama\monitors\StatusSupport.mon
+MONF 00000839 //*****************************************************************************
+// Title:         WSService
+// Description:   This monitor contains events which are helpful for invoking a webservice
+// $Copyright(c)  2011-2012 Progress Software Corporation (PSC). All rights reserved.$
+// $Copyright (c) 2013 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.$
+// Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG
+//*****************************************************************************
+
+package com.apama.ws;
+
+event WSConstants{
+	action getTimeoutType() returns string { return "timeout"; }
+	action getAdapterDownType() returns string { return "adapterdown"; } 
+	action getInvalidResponseType() returns string { return "invalid response"; } 
+}
+
+event WSRequest {
+	string endpointId;
+	string requestId ;
+	string eventStr ;
+}
+/* 
+ * @deprecated [This meant for backward compatibility of already exported monitor files]
+ */
+event WSResponse { 	 
+    string endpointId; 	 
+    string requestId; 	 
+    string eventStr; 	 
+}
+event WSError {
+	string requestEvent;
+	string errorMsg;
+	string failureType;		// "timeout" or "adapterdown" or "invalid response"
+	dictionary<string, string> extraParams;
+}
+
+/* 
+ * @deprecated [This meant for backward compatibility of already exported monitor files]
+ */
+event SetupContextListeners 	 
+{ 	 
+        string serviceId;        // the adapter instance id for which service monitor was created 	 
+        context sourceContext;   // the context where the request events will be routed 	 
+} 	 
+/* 
+ * @deprecated [This meant for backward compatibility of already exported monitor files]
+ */
+event TerminateContextListeners 	 
+{ 	 
+        string serviceId;       // the adapter instance id for which service monitor was created 	 
+        context terminateContext; // the context at which monitor will be terminated. 	 
+} 00000033 C:\SoftwareAG\Apama\adapters\monitors\WSService.mon
+MONF 0001252f package com.apama.scenario;
+
+/**
+ * This file contains the shared event definitions that are generic across 
+ * all Scenarios.  
+ *
+ * WARNING: 
+ *    The event definitions contained in this file form an internal protocol 
+ *    and may change between software releases.
+ *
+ * Notes:
+ * 1) The Event definitions contained in this file MUST be considered
+ *    as an internal implementation of the communications protocol
+ *    between the Apama client API and an Apama server.  As such
+ *    these event definitions MUST NOT be considered "stable" and are 
+ *    subject to change in any future software release.
+ *
+ *    The ONLY supported public APIs to the Scenario Service are the 
+ *    Java client API (in the com.apama.services.scenario package) and the 
+ *    .NET client API (in the Apama.Services.Scenario namespace).  
+ *    Customers should not attempt to interface at the event or 
+ *    EPL layer. Some events have been changed over time (as 
+ *    noted here).
+ *
+ * 2) Most events now contain an initial field called "scenarioId". This string 
+ *    uniquely identifies a scenario inside the correlator, and is used as 
+ *    the package name, in several events, and for making up a part of the 
+ *    data and control channel names.
+ *
+ * 3) Events that are intended to be used in a request-response pattern contain
+ *    a "messageId" field.  The value of this field must be copied from the 
+ *    request event into the response event. The mechanism allows clients to 
+ *    match up request-response pairs.
+ *
+ *
+ * $Copyright(c) 2005-2011 Progress Software Corporation (PSC). All rights reserved.$
+ * $Copyright (c) 2013-2015 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.$
+ * Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG
+ *
+ * $Revision: 267710 $
+ */
+
+/**
+ * Request that a new instance of a specific scenario is created.
+ *
+ * See also: Created(), Acknowledge()
+ *
+ * Direction: From the client to the correlator.
+ *
+ * Response: Acknowledge()
+ */
+event Create {
+	string scenarioId;                   // the unique name of the scenario
+	integer messageId;                   // the unique message ID (for request-response matching)
+	string owner;                        // the owner (user) of the instance.
+	sequence<string> inputFieldValues;   // sequence of INPUT field values in string form
+}
+
+/**
+ * Notifies all interested clients that a new instance of a specific 
+ * scenario has been created. 
+ * The event provides the owner (user), initial state, and initial values for 
+ * all input fields and all output fields.
+ *
+ * See also: Create()
+ *
+ * Direction: From the correlator to the client.
+ *
+ * Channel: <scenarioId>.Data and <scenarioId>.Data.Raw
+ */
+event Created { 
+	string scenarioId;                   // the unique name of the scenario
+	integer messageId;                   // the unique message ID (for request-response matching)
+	integer scenarioInstanceId;          // the ID of the scenario instance
+	string owner;                        // the owner (user) of the instance.
+	string state;                        // the initial state of the instance.
+	sequence<string> inputFieldValues;   // sequence of INPUT field values in string form
+	sequence<string> outputFieldValues;  // sequence of OUTPUT field values in string form
+}
+
+
+/**
+ * Notifies the interested clients of child scenarios created from
+ * a parent scenario.
+ *
+ * Direction: Internal in the correlator
+ *
+ * Channel: <none>
+ */
+event ParentChildRelationship {
+	string parentScenarioId;
+	integer parentScenarioInstanceId;
+	string childScenarioId;
+	integer childScenarioInstanceId;
+}
+
+
+/**
+ * Request that a specific instance of a specific scenario is edited (the input 
+ * field values are changed).
+ *
+ * See also: Edited(), Acknowledge()
+ *
+ * Direction: From the client to the correlator.
+ *
+ * Response: Acknowledge()
+ */
+event Edit { 
+	string scenarioId;                   // the unique name of the scenario
+	integer messageId;                   // the unique message ID (for request-response matching)
+	integer scenarioInstanceId;          // the ID of the scenario instance
+	sequence<string> inputFieldValues;   // sequence of INPUT field values in string form
+}
+
+
+/**
+ * Notifies all interested clients that a specific instance of a specific 
+ * scenario has been edited (the input field values have changed).
+ *
+ * See also: Edit()
+ *
+ * Direction: From the correlator to the client.
+ *
+ * Channel: <scenarioId>.Data and <scenarioId>.Data.Raw
+ */
+event Edited { 
+	string scenarioId;                   // the unique name of the scenario
+	integer messageId;                   // the unique message ID (for request-response matching)
+	integer scenarioInstanceId;          // the ID of the scenario instance
+	sequence<string> inputFieldValues;   // sequence of INPUT field values in string form
+	sequence<string> outputFieldValues;  // sequence of OUTPUT field values in string form
+}
+
+
+/**
+ * Request that a specific instance of a specific scenario is deleted.
+ *
+ * See also: Deleted(), Acknowledge()
+ *
+ * Direction: From the client to the correlator.
+ *
+ * Response: Acknowledge()
+ */
+event Delete {
+	string scenarioId;                   // the unique name of the scenario
+	integer messageId;                   // the unique message ID (for request-response matching)
+	integer scenarioInstanceId;          // the ID of the scenario instance
+}
+
+
+/**
+ * Notifies all interested clients that a specific instance of a specific 
+ * scenario has been deleted.
+ *
+ * See also: Delete()
+ *
+ * Direction: From the correlator to the client.
+ *
+ * Channel: <scenarioId>.Data and <scenarioId>.Data.Raw
+ */
+event Deleted {
+	string scenarioId;                   // the unique name of the scenario
+	integer messageId;                   // the unique message ID (for request-response matching)
+	integer scenarioInstanceId;          // the ID of the scenario instance
+}
+
+
+/**
+ * Indicates that a specific instance of a specific scenario has died.
+ * This is sent as a result of a scenario instance use of MonitorScript ondie.
+ * This occurs for any of deleting a running scenario, a scenario failing, or 
+ * entering the end state.
+ *
+ * Direction: From the correlator to the client.
+ *
+ * Channel: <scenarioId>.Data and <scenarioId>.Data.Raw
+ */
+event InstanceDied {
+	string scenarioId;                   // the unique name of the scenario
+	integer scenarioInstanceId;          // the ID of the scenario instance
+}
+
+
+/**
+ * Contains updated scenario instance output fields.
+ * Note that this is the ONLY event type that is sendted on the 
+ * "<scenarioId>.Data" channel.
+ *
+ * Direction: From the correlator to the client.
+ *
+ * Channel: <scenarioId>.Data and <scenarioId>.Data.Raw
+ */
+event Update { 
+	string scenarioId;                   // the unique name of the scenario
+	integer scenarioInstanceId;          // the ID of the scenario instance
+	float timeStamp;                     // the time of the update (seconds since epoch)
+	sequence<string> outputFieldValues;  // sequence of OUTPUT field values in string form
+}
+
+
+/**
+ * A general Acknowledgement event that is the "response" to various "request"
+ * events such as Create, Edit, Delete.
+ *
+ * Direction: From the correlator to the client.
+ *
+ * Channel: <scenarioId>.Control
+ */
+event Acknowledge { 
+	string scenarioId;                   // the unique name of the scenario
+	integer messageId;                   // the unique message ID (for request-response matching)
+	integer scenarioInstanceId;          // the id of the scenario instance
+	boolean success;                     // boolean indication of success
+	sequence<string> outputFieldValues;  // sequence of the OUTPUT field values in string form, 
+	                                     //   or an empty sequence if success = false
+}
+
+
+/**
+ * Indicates that a specific instance of a specific scenario has changed 
+ * state, where valid states include "ENDED", "FAILED", "RUNNING".
+ *
+ * Direction: From the correlator to the client.
+ *
+ * Channel: <scenarioId>.Data and <scenarioId>.Data.Raw
+ */
+event StateChange { 
+	string scenarioId;                   // the unique name of the scenario.
+	integer scenarioInstanceId;          // the ID of the scenario instance.
+	string state;                        // the new state.
+}
+
+
+/**
+ * Request that each scenario loaded in the correlator send its meta
+ * information out on the supplied channel. When all scenarios have
+ * sent out this information, a final RequestScenariosDone event will
+ * be sent on the same channel.
+ *
+ * As soon as this event is received, a RequestScenariosAck will be
+ * sent on the same channel so client can stop resending the RequestScenarios
+ * event.
+ *
+ * See also: Scenario, RequestScenariosDone, RequestScenariosAck
+ *
+ * Direction: From the client to the correlator.
+ *
+ * Response: Scenario() from each loaded scenario.
+ */
+event RequestScenarios { 
+	// renamed for clarity - was Request
+	string channel;                      // Name of the private response channel.
+}
+
+
+/**
+ * This is a simple marker event that is sent by the correlator to indicate 
+ * that it has finished sending all of the Scenario events in response
+ * to a RequestScenarios event.
+ * 
+ * See also: RequestScenarios, Scenario.
+ *
+ * Direction: From the correlator to the client.
+ *
+ * Channel: The private channel that was specified in the RequestScenarios event.
+ */
+event RequestScenariosDone {}
+
+/* This is a simple ack event that is sent by the correlator to indicate the
+ * RequestScenarios event is received and the request is being processed
+ *
+ * See also: RequestScenarios
+ *
+ * Direction: From the correlator to the client.
+ *
+ * Channel: The private channel that was specified in the RequestScenarios event.
+ */
+event RequestScenariosAck {}
+
+/**
+ * Request that each instance of the specified scenario send an Instance event 
+ * out on the supplied channel. When all instances for the scenario have been 
+ * sent out, a final RequestInstancesDone event will be sent on the same channel.
+ *
+ * See also: Instance, RequestInstancesDone
+ *
+ * Direction: From the client to the correlator.
+ *
+ * Response: Instance() from each scenario instance.
+ */
+event RequestInstancesOnChannel { 
+	string scenarioId;                   // Identifier of the scenario for which to return instances. 
+	integer messageId;                   // the unique message ID (for request-response matching)
+	string channel;                      // Name of the private response channel.
+}
+
+/**
+ * Request that each instance for the specified user of the specified scenario
+ * send an Instance event out on the supplied channel. When all instances for
+ * the scenario have been sent out, a final RequestInstancesDone event will be 
+ * sent on the same channel.
+ *
+ * See also: Instance, RequestInstancesDone
+ *
+ * Direction: From the client to the correlator.
+ *
+ * Response: Instance() from each scenario instance.
+ */
+event RequestInstancesOnChannelByUser { 
+	string scenarioId;                   // Identifier of the scenario for which to return instances. 
+	integer messageId;                   // the unique message ID (for request-response matching)
+	string channel;                      // Name of the private response channel.
+	string owner;                        // the username to filter by
+}
+
+
+/**
+ * This is a simple marker event that is sent by the correlator to indicate 
+ * that it has finished sending all of the Instance events in response
+ * to a RequestInstancesInternal event.
+ * 
+ * See also: RequestInstancesInternal, Scenario.
+ *
+ * Direction: From the correlator to the client.
+ *
+ * Channel: A unique private channel as specified by the client in a 
+ *          RequestScenariosOnChannel event.
+ *
+ *          Note that previously it would have been on <scenarioId>.Data and 
+ *          <scenarioId>.Data.Raw, but that behaviour is now deprecated.
+ */
+event RequestInstancesDone {
+	string scenarioId;                   // Identifier of the scenario for instances were returned. 	
+	integer messageId;                   // the unique message ID (for request-response matching)
+}
+
+
+/**
+ * Describes the meta-information about a scenario that is loaded in the 
+ * correlator.
+ * 
+ * See also: RequestScenarios, RequestScenariosDone, ScenarioUnloaded
+ * 
+ * Direction: From correlator to client.
+ *
+ * Channel:   1) com.apama.scenario to broadcast when loaded.
+ *            2) A unique private channel as specified by the client in a 
+ *               RequestScenarios event.
+ *
+ * This event has gained the executionMode field in Apama 4.2
+ */
+event Scenario {
+	string scenarioId;                   // unique identifier for Scenario, e.g. Scenario_statistical$002darbitrage
+	string displayName;                  // user-specified name for Scenario, e.g. statistical-arbitrage
+	string description;                  // description of the Scenario
+	sequence<string> inputNames;         // input parameter names
+	sequence<string> inputTypes;         // input parameter types
+	sequence<string> inputConstraints;   // input parameter contraints
+	sequence<string> inputDefaults;      // input parameter default values
+	sequence<string> outputNames;        // output parameter names
+	sequence<string> outputTypes;        // output parameter types
+	integer executionMode;               // 0 = serial, 1 = parallel, 2 = parallel child. New as of 4.2
+	dictionary<string, string> extraParams; // Additional parameters
+}
+
+
+
+/**
+ * Indicates that a specific Scenario definition is being unloaded.
+ *
+ * Direction: From the correlator to the client.
+ *
+ * Channel: <scenarioId>.Control
+ */
+event ScenarioUnloaded { 
+	string scenarioId;                   // the unique name of the scenario
+}
+
+/**
+ * Provides a dump of the current state of a scenario instance.
+ * The event definition is identical to the Created event, and includes the 
+ * owner (user), initial state, and current values for all input fields and 
+ * all output fields.
+ *
+ * Instance events are sent in response to RequestInstancesOnChannel event 
+ * and the deprecated RequestInstancesInternal event; 
+ *
+ * See also: RequestInstancesOnChannel, RequestInstancesDone, RequestInstancesInternal
+ *
+ * Direction: From the correlator to the client.
+ *
+ * Channel: A unique private channel as specified by the client in a 
+ *          RequestScenariosOnChannel event.
+ *
+ *          Note that previously it would have been on <scenarioId>.Data and 
+ *          <scenarioId>.Data.Raw, but that behaviour is now deprecated.
+ */
+event Instance {
+	string scenarioId;                   // the unique name of the scenario. 
+	integer messageId;                   // the unique message ID (for request-response matching)
+	integer scenarioInstanceId;          // the ID of the scenario instance. 
+	string owner;                        // the owner (user) of the instance.
+	string state;                        // the initial state of the instance.
+	sequence<string> inputFieldValues;   // sequence of INPUT field values in string form. 
+	sequence<string> outputFieldValues;  // sequence of OUTPUT field values in string form. 
+}
+
+
+/**
+ * Indicates this shared MonitorScript has been loaded.
+ *
+ * Direction: From the correlator to the client.
+ *
+ * Channel: com.apama.scenario to broadcast when loaded.
+ */
+event ScenarioServiceLoaded { 
+}
+
+/**
+ * Indicates this shared MonitorScript is being unloaded.
+ *
+ * Direction: From the correlator to the client.
+ *
+ * Channel: com.apama.scenario to broadcast when unloaded.
+ */
+event ScenarioServiceUnloaded { 
+}
+
+
+/**
+ * Set the period over which updates will be queued and coalesced before being
+ * sent out on the data channel. Defaults to zero, which means they won't be
+ * queued. If it is negative then we won't send any updates on the data channel.
+ * This event is deprecated and the ConfigureUpdates event should be used 
+ * instead (see below)
+ */
+event SetThrottlingPeriod {
+	float period;   // The period in seconds. Default zero.
+}
+
+
+/**
+ * Configures how updates are sent from scenarios.
+ * Each scenario is controlled by two configurations - a global default,
+ * and an optional per scenario configuration.  The per scenario
+ * configuration takes precedence over the global default.
+ * The configuration is made up of a number of entries in 
+ * the configuration dictionary. The ConfigureUpdate event 
+ * is merged into any previous configuration.
+ *
+ * Global configuration can be modified by specifying an empty string 
+ * for scenarioId, and empty values remove values.
+ */
+event ConfigureUpdates {
+	/** Specifies the scenario the configuratio will apply to, or use 
+		empty string "" to specify a global default. 
+	*/
+	string scenarioId;
+	/** 
+	 * A set of the configurations modified by this event
+	 * the key and meaning is one of:
+	 * sendThrottled - boolean - whether to send Updates to the 
+	 *                           Throttled (.Data) channel (default=true)
+	 * throttlePeriod - float - period with which to send Updates. 
+	 *                          0.0 means updates are not throttled - 
+	 *                          every update is sent on the Throttled 
+	 *                          channel. (default=0.0)
+	 * sendRaw - boolean - whether to send Updates on the Raw channel 
+	 *                     (.Raw) (default=true)
+ 	 * sendThrottledUser - boolean - whether to send Updates to the 
+	 *                     throttled filtered (.Data:username) channel
+	 *                     (default=false)
+ 	 * sendRawUser - boolean - whether to send Updates to the Raw 
+	 *                     channel (.Raw:username) (default=false)
+	 * routeUpdate - boolean - whether to route Update (and Edited, Deleted) events.
+	 * An empty value removes that entry from the configuration
+	 */
+	dictionary<string,string> configuration;
+}
+
+/**
+ * Immediately flushes to receivers any scenario Update events that were 
+ * waiting for the next throttling period before being sent. 
+ * 
+ */
+event SendQueuedUpdatesNow {
+	
+}
+
+/* ==========================================================================
+ * The following describes INTERNAL event definitions that should not be sent 
+ * into the correlator, nor relied upon.
+ * ==========================================================================
+ */
+
+/**
+ * Request that each instance of the specified scenario send an Instance event 
+ * out on the scenario Data or Raw channel. When all instances for the scenario
+ * have been sent out, a final RequestInstancesDone event will be sent on the 
+ * same channel.
+ *
+ * See also: Instance, RequestInstancesDone, RequestInstancesOnChannel, RequestInstancesOnChannelByUser
+ *
+ * Direction: From the ScenarioService to the scenario
+ *
+ * Response: Instance() from each scenario instance, RequestInstancesDone when finished.
+ */
+event RequestInstancesInternal { 
+	string scenarioId;                   // Identifier of the scenario for which to return instances. 
+	integer messageId;                   // the unique message ID (for request-response matching)
+	string channel;                      // Name of the private response channel.
+	boolean internal;                    // if true, events should be routed/ send-to'd the main context
+	string owner;                        // owner filter (optional)
+	boolean ownerFilter;                 // whether to filter by owner
+}
+
+/**
+ * A scenario has finished running, but is still discoverable.
+ * (i.e. entered end state or failed - but not deleted).
+ * Note that this event contains the state as of the last
+ * Update/ Edited event - i.e. if an action modified an output variable 
+ * and then caused the scenario to fail, the prior modification
+ * would not be reflected in this event.
+ *
+ * This event contains sufficient information for discovery of the
+ * scenario instance later
+ * 
+ * Direction: from scenarios to the ScenarioService sub-monitor (spawned per scenario)
+ */
+event ScenarioFinished {
+	string scenarioId;                   // Identifier of the scenario which has failed. 
+	integer scenarioInstanceId;          // the ID of the scenario instance. 
+	string owner;                        // the owner (user) of the instance.
+	string state;                        // the initial state of the instance.
+	sequence<string> inputFieldValues;   // sequence of INPUT field values in string form. 
+	sequence<string> outputFieldValues;  // sequence of OUTPUT field values in string form. 
+}
+/**
+ * Only used internally to tell all the scenarios to start routing their
+ * meta data (Scenario). It is followed by a sweeper FinishedScenarioRecovery
+ * event which indicates that all the scenarios have reported in.
+ */
+event StartScenarioRecovery {}
+
+/**
+ * Sweeper event to indicate that scenario recovery is done. Only used internally.
+ */
+event FinishedScenarioRecovery {}
+
+/**
+ * Trigger discovery of a parallel scenario. Sent from a sub-monitor of
+ * ScenarioService to RequestInstancesHandler to create a new sub-monitor.
+ */
+event RequestInstancesParallel {
+	RequestInstancesInternal request;          // the original request event
+	dictionary<integer, context> instances;    // all scenario instances and their running context
+	integer highestInstanceId;                 // the highest scenarioInstanceId listed in instances (or more accurately, the highest when discovery started)
+}
+
+/**
+ * Discovery protocol of a parallel scenario. Sent from a scenario instance
+ * to RequestInstancesHandler.
+ */
+event RequestInstancesParallelDone {
+	string scenarioId;                   // the unique name of the scenario
+	integer messageId;                   // the unique message ID (for request-response matching)
+	integer scenarioInstanceId;          // the ID of the scenario instance
+}
+
+/**
+ * Notification of a new scenario instance
+ */
+event ParallelStarting {
+	string scenarioId;                   // the unique name of the scenario
+	integer scenarioInstanceId;          // the ID of the scenario instance
+	string owner;                        // the owner of the scenario instance
+	context runningCtx;                  // the context the scenario is running in
+}
+
+/**
+ * Get the current configuration for a given scenario and the default configuration
+ */
+event GetConfiguration {
+	string scenarioId;                   // the unique name of the scenario
+}
+
+/**
+ * The current configuration for a given scenario and the default configuration
+ * @see ConfigureUpdates
+ */
+event Configuration {
+	string scenarioId;                        // the unique name of the scenario
+	dictionary<string, string> defaults;      // the global defaults
+	dictionary<string, string> configuration; // the scenario configuration (takes precedence)
+}
+
+
+/**
+ * An operation has completed. Sent from parallel scenarios to the main context.
+ */
+event OperationCompleted {
+	string scenarioId;
+	integer scenarioInstanceId;
+	integer messageId;
+}
+
+/**
+ * Notification that a scenario has loaded a ConfigureUpdates event
+ */
+event ScenarioProcessedUpdates {
+	string scenarioId;
+}
+
+/**
+ * Request all configuration
+ */
+event GetAllConfiguration {
+	integer requestId;
+}
+
+/** 
+ * Response all configuration
+ */
+event AllConfiguration {
+	integer requestId;
+	dictionary<string, string> defaultConfig;
+	dictionary<string, dictionary<string, string> > configurations;
+}
+
+
+/**
+ * Library of utiltiy actions
+ */
+event ScenarioServiceLibrary {
+
+	/**
+	 * Get the control channel for a scenario Id. This channel
+	 * is always enabled (uses an event set scenario ID)
+	 */
+	action getControlChannel(string scenarioId) returns string
+	{
+		return scenarioId+".Control";
+	}
+	/**
+	 * Get the data channel for a scenario ID. This channel 
+	 * is enabled by the sendThrottled configuration key and 
+	 * the throttlePeriod key (Update events may be throttled)
+	 */
+	action getDataChannel(string scenarioId) returns string
+	{
+		return scenarioId+".Data";
+	}
+	/**
+	 * Get the raw channel for a scenario ID. This channel
+	 * is enabled by the sendRaw configuration key.
+	 */
+	action getRawChannel(string scenarioId) returns string
+	{
+		return scenarioId+".Data.Raw";
+	}
+	/**
+	 * Get the data channel for a scenario Id. This channel 
+	 * is enabled by the sendThrottledUser configuration key and 
+	 * the throttlePeriod key (Update events may be throttled)
+	 */
+	action getDataUserChannel(string channel, string owner) returns string
+	{
+		return channel+":"+owner;
+	}
+	/**
+	 * Get the raw channel for a scenario Id. This channel
+	 * is enabled by the sendRawUser configuration key.
+	 */
+	action getRawUserChannel(string channel, string owner) returns string
+	{
+		return channel+":"+owner;
+	}
+	
+	/**
+	 * Merge configuration. Any entries in updates overwrite entries in configuration.
+	 * An empty string value removes the value.
+	 * @see ConfigureUpdates
+	 */
+	action mergeConfiguration(dictionary<string, string> updates, dictionary<string, string> configuration) {
+		string k;
+		for k in updates.keys() {
+			configuration[k]:=updates[k];
+			if updates[k]="" then {
+				configuration.remove(k);
+			}
+		}
+	}
+	
+	// implementation note: the defaults for sendThrottled, sendRaw, throttlePeriod, etc are in the following actions:
+	/**
+	 * Get the sendThrottled value from the given configuration
+	 * @see ConfigureUpdates
+	 */
+	action getSendThrottled(dictionary<string,string> defaults, dictionary<string,string> config) returns boolean {
+		string c:=getConfig(defaults, config, "sendThrottled", "true");
+		return c = "true";
+	}
+
+	/**
+	 * Get the sendThrottledUser value from the given configuration
+	 * @see ConfigureUpdates
+	 */
+	action getSendThrottledUser(dictionary<string,string> defaults, dictionary<string,string> config) returns boolean {
+		string c:=getConfig(defaults, config, "sendThrottledUser", "false");
+		return c = "true";
+	}
+	
+	/**
+	 * Get the sendRaw value from the given configuration
+	 * @see ConfigureUpdates
+	 */
+	action getSendRaw(dictionary<string,string> defaults, dictionary<string,string> config) returns boolean {
+		string c:=getConfig(defaults, config, "sendRaw", "true");
+		return c = "true";
+	}
+	
+	/**
+	 * Get the sendRawUser value from the given configuration
+	 * @see ConfigureUpdates
+	 */
+	action getSendRawUser(dictionary<string,string> defaults, dictionary<string,string> config) returns boolean {
+		string c:=getConfig(defaults, config, "sendRawUser", "false");
+		return c = "true";
+	}
+	
+	/**
+	 * Get the throttlePeriod value from the given configuration
+	 * @see ConfigureUpdates
+	 */
+	action getThrottlePeriod(dictionary<string,string> defaults, dictionary<string,string> config) returns float {
+		string c:=getConfig(defaults, config, "throttlePeriod", "0.0");
+		return float.parse(c);
+	}
+	
+	/**
+	 * Get the routeUpdate value from the given configuration
+	 * @see ConfigureUpdates
+	 */
+	action getRouteUpdate(dictionary<string,string> defaults, dictionary<string,string> config) returns boolean {
+		string c:=getConfig(defaults, config, "routeUpdate", "false");
+		return c = "true";
+	}
+	
+
+	/**
+	 * Get the specified key from the configuration dictionaries, reverting to the default 
+	 * if none specified.
+	 */
+	action getConfig(dictionary<string,string> defaults,
+	                 dictionary<string,string> config, 
+	                 string key, string _default) returns string {
+		if config.hasKey(key) then {
+			return config[key];
+		}
+		if defaults.hasKey(key) then {
+			return defaults[key];
+		}
+		return _default;
+	}
+
+	action configurationManager(dictionary<string, string> defaultConfig, dictionary<string, dictionary<string, string> > configurations) {
+		// the recognised ConfigureUpdates configuration keys, as above:
+		dictionary<string,boolean> KNOWN_CONFIG_KEYS := {"sendThrottled":true, "throttlePeriod":false,
+		 "sendRaw":true, "sendThrottledUser":true, "sendRawUser":true, "routeUpdate":true};
+
+		dictionary <string,string> EMPTY_DICT:=new dictionary<string,string>;
+		ConfigureUpdates cu;
+		on all ConfigureUpdates():cu {
+			string key;
+			for key in cu.configuration.keys() {
+				if not KNOWN_CONFIG_KEYS.hasKey(key) then {
+					log "Unrecognized configuration property "+key+" in event "+cu.toString() at WARN;
+				}
+			}
+			if cu.scenarioId = "" then {
+				mergeConfiguration(cu.configuration, defaultConfig);
+				log "Received "+cu.toString()+" : defaults applicable to all scenarios" at INFO;
+			} else {
+				if not configurations.hasKey(cu.scenarioId) then {
+					configurations.add(cu.scenarioId, new dictionary<string,string>);
+				}
+				mergeConfiguration(cu.configuration, configurations[cu.scenarioId]);
+				on ScenarioProcessedUpdates(cu.scenarioId) -> completed ConfigureUpdates(scenarioId=cu.scenarioId) {
+					log "Received "+cu.toString()+" : applied to scenario" at INFO;
+				}
+				on completed ConfigureUpdates(scenarioId=cu.scenarioId) and not ScenarioProcessedUpdates(cu.scenarioId) {
+					log "Received "+cu.toString()+" : for scenario that is not yet defined" at INFO;
+				}
+			}
+		}
+
+		GetConfiguration getConfig;
+		on all GetConfiguration():getConfig {
+			dictionary<string,string> config:=EMPTY_DICT;
+			if configurations.hasKey(getConfig.scenarioId) then {
+				config:=configurations[getConfig.scenarioId];
+			}
+			route Configuration(getConfig.scenarioId, defaultConfig, config);
+		}	
+		GetAllConfiguration gac;
+		on all GetAllConfiguration():gac {
+			route AllConfiguration(gac.requestId, defaultConfig, configurations);
+		}
+	}
+		
+}
+
+event CallbackHelper {
+	sequence<action<> > callbacks;
+	action callback() {
+		action<> c;
+		for c in callbacks {
+			c();
+		}
+	}
+}
+
+
+
+/**
+ * Base event for tracking configuration for a given scenario
+ */
+event ScenarioServiceUpdaterBase {
+	// these are internal and should not be set by users
+	string scenarioId;
+	dictionary<string,string> defaultConfig;
+	dictionary<string,string> config;
+	ScenarioServiceLibrary lib;
+	boolean sendThrottled;
+	boolean sendRaw;
+	boolean sendAny;
+	boolean emitAny;
+	boolean sendThrottledUser;
+	boolean sendRawUser;
+	boolean routeUpdate;
+	float throttlePeriod;
+	float throttleStart;
+	sequence<listener> listeners;
+	string controlChannel;
+	string rawChannel;
+	string dataChannel;
+
+	/**
+	 * Called by monitor at onload time
+	 * Will maintain configuration for this scenario
+	 * @param sId the scenarioId
+	 */
+	action init(string sId, action<> cb_onUpdate) {
+		scenarioId:=sId;
+		controlChannel := lib.getControlChannel(scenarioId);
+		rawChannel := lib.getRawChannel(scenarioId);
+		dataChannel := lib.getDataChannel(scenarioId);
+		route GetConfiguration(scenarioId);
+		Configuration c;
+		listener l:=on Configuration(scenarioId=scenarioId):c {
+			config := c.configuration;
+			defaultConfig := c.defaults;
+			configurationUpdated();
+			cb_onUpdate();
+		}
+		listeners.append(l);
+	}
+
+	/**
+	 * Listen for further configuration changes.
+	 * @param cb_onUpdate callback upon configuration having been updated
+	 */	
+	action listenToConfigureUpdates(action<> cb_onUpdate) {
+		ConfigureUpdates cu;
+		listener l:=on all ConfigureUpdates(scenarioId=""):cu or all ConfigureUpdates(scenarioId=scenarioId):cu {
+			if(cu.scenarioId != "") then {
+				route ScenarioProcessedUpdates(cu.scenarioId);
+			}
+			onConfigureUpdates(cu);
+			cb_onUpdate();
+		}
+		listeners.append(l);
+	}
+
+	/**
+	 * Called when new ConfigureUpdates event available
+	 * @param sId the scenarioId
+	 */
+	action onConfigureUpdates(ConfigureUpdates cu) {
+		if cu.scenarioId = "" then {
+			lib.mergeConfiguration(cu.configuration, defaultConfig);
+		} else {
+			lib.mergeConfiguration(cu.configuration, config);
+		}
+		configurationUpdated();
+	}
+	
+	/**
+	 * Called when the configuration should be re-parsed.
+	 * @param sId the scenarioId
+	 */
+	action configurationUpdated() {
+		sendThrottled:=lib.getSendThrottled(defaultConfig, config);
+		sendThrottledUser:=lib.getSendThrottledUser(defaultConfig, config);
+		if sendThrottled or sendThrottledUser then {
+			throttlePeriod:=lib.getThrottlePeriod(defaultConfig, config);
+			if(throttlePeriod < 0.0) then {
+				sendThrottled:=false;
+				sendThrottledUser:=false;
+			}
+			throttleStart:=currentTime;
+		}
+		sendRaw:=lib.getSendRaw(defaultConfig, config);
+		sendRawUser:=lib.getSendRawUser(defaultConfig, config);
+		routeUpdate:=lib.getRouteUpdate(defaultConfig, config);
+		sendAny:= sendRaw or sendThrottled or routeUpdate or sendRawUser or sendThrottledUser;
+		emitAny:= sendRaw or sendThrottled or sendRawUser or sendThrottledUser;
+	}
+
+	/** 
+	 * Get whether this scenario should send on the throttled (Data) channel
+	 */
+	action isSendThrottled() returns boolean {
+		return sendThrottled or sendThrottledUser;
+	}
+
+	/** 
+	 * Get whether this scenario should send on the raw channel
+	 */
+	action isSendRaw() returns boolean {
+		return sendRaw or sendRawUser;
+	}
+
+	action doEmit(string emitted, string owner) {
+		if sendRaw then {
+			emit emitted to rawChannel;
+		}
+		if sendThrottled then {
+			emit emitted to dataChannel;
+		}
+		if sendRawUser then {
+			emit emitted to lib.getRawUserChannel(rawChannel, owner);
+		}
+		if sendThrottledUser then {
+			emit emitted to lib.getDataUserChannel(dataChannel, owner);
+		}
+	}
+
+	/**
+ 	 * Kill any listeners this object has started
+	 */
+	action destroy() {
+		listener l;
+		for l in listeners {
+			l.quit();
+		}
+	}
+}
+
+
+/**
+ * Utility event for tracking configuration for a given scenario.
+ * This event is suitable for use by monitors which spawn per instance
+ * (e.g. Scenarios)
+ * 
+ * This event also uses a callback to get the updates (supplied in
+ * instanceInit). If the scenario is configured to only send throttled 
+ * updates, the callback is only called when the throttling period 
+ * determines an update should be sent - thus, the scenario does not
+ * need to generate the output sequence<string> except when needed,
+ * which can improve performance in such a configuration.
+ * 
+ * actions starting with an underscore should be considered private 
+ * and not called by users of this event.
+ */
+event ScenarioServiceUpdaterSingleInstance {
+	// these are internal and should not be set by users
+	string scenarioId;
+	integer scenarioInstanceId;
+	ScenarioServiceLibrary lib;
+	listener throttlingListener;
+	ScenarioServiceUpdaterBase base;
+	boolean havePending;
+	float latestUpdate;
+	action<> returns sequence<string> getUpdate;
+	Update update;
+	boolean needUpdate;
+	context mainContext;
+	string owner;
+	string controlChannel;
+	string rawChannel;
+	string dataChannel;
+
+	/**
+	 * Called by monitor at onload time
+	 * Will maintain configuration for this scenario
+	 */
+	action init(string sId) {
+		init_cb(sId, _noopAction);
+	}
+	
+	/**
+	 * Called by monitor at onload time
+	 * Will maintain configuration for this scenario.
+	 * cb_init is called when initialisation is complete
+	 */
+	action init_cb(string sId, action<> cb_init) {
+		base.init(sId, cb_init);
+		scenarioId:=sId;
+		controlChannel := lib.getControlChannel(scenarioId);
+		rawChannel := lib.getRawChannel(scenarioId);
+		dataChannel := lib.getDataChannel(scenarioId);
+		base.listenToConfigureUpdates(_noopAction);
+		mainContext:=context.current();
+	}
+
+	action _noopAction() {
+	}
+	
+
+	/**
+	 * Called by monitor after spawn
+	 * Will maintain configuration for this scenario, and update listeners appropriately.
+	 * @param getUpdateCallback a callback to get the latest outputFieldValues - may be called at any time, must 
+         *        always return a consistent set of outputs
+	 */
+	action instanceInit(integer id, action<> returns sequence<string> getUpdateCallback, string _owner) {
+		scenarioInstanceId:=id;
+		owner:=_owner;
+		getUpdate:=getUpdateCallback;
+		update.scenarioId:=scenarioId;
+		update.scenarioInstanceId:=scenarioInstanceId;
+		base.listenToConfigureUpdates(_configurationUpdated);
+		_configurationUpdated();
+		listener l:=on all SendQueuedUpdatesNow() {
+			_sendThrottledUpdate();
+		}
+		base.listeners.append(l);
+	}
+
+	/** 
+	 * Get whether this scenario should route updates
+	 */
+	action isRouteUpdate() returns boolean {
+		return base.routeUpdate;
+	}
+
+	/**
+ 	 * Kill any listeners this object has started
+	 */
+	action destroy() {
+		base.destroy();
+		throttlingListener.quit();
+	}
+	  
+	/**
+	 * called in instances (not factories) when configuration has changed
+	 */
+	action _configurationUpdated() {
+		if base.isSendThrottled() then {
+			throttlingListener.quit();
+			flushPending();
+			if(base.throttlePeriod >= 0.0) then {
+				if havePending then {
+					_setupThrottleListener();
+				}
+			}
+		}
+	}
+
+	/**
+	 * set up a throttled listener according to throttlePeriod control
+	 */
+	action _setupThrottleListener() {
+		if base.throttlePeriod > 0.0 then {
+			float offset:=currentTime-base.throttleStart;
+			float t:=((offset/base.throttlePeriod).floor()+1).toFloat();
+			throttlingListener:=on wait((t*base.throttlePeriod)-offset) {
+				_sendThrottledUpdate();
+			}
+		} else {
+			_sendThrottledUpdate();
+		}
+	}
+
+	/**
+	 * actually send an update on the throttled channel
+	 */
+	action _sendThrottledUpdate() {
+		if not havePending then {
+			return;
+		}
+		if needUpdate then {
+			update.outputFieldValues:=getUpdate();
+			update.timeStamp:=latestUpdate;
+			needUpdate:=false;
+		}
+		if base.sendThrottled then {
+			send update to dataChannel;
+		}
+		if base.sendThrottledUser then {
+			send update to lib.getDataUserChannel(dataChannel, owner);
+		}
+		havePending:=false;
+	}
+
+	/**
+	 * flush any pending update on the throttled channel.
+	 */
+	action flushPending() {
+		if havePending then {
+			_sendThrottledUpdate();
+			throttlingListener.quit();
+		}
+	}	
+
+	/**
+ 	 * Called when a new update is available.
+	 */
+	action newUpdateAvailable() {
+		needUpdate:=true;
+		latestUpdate:=currentTime;
+ 		if base.sendRaw or base.routeUpdate then {
+			if needUpdate then {
+				update.outputFieldValues:=getUpdate();
+				update.timeStamp:=currentTime;
+				needUpdate:=false;
+			}
+			if base.sendRaw then {
+				send update to rawChannel;
+			}
+			if base.sendRawUser then {
+				send update to lib.getRawUserChannel(rawChannel, owner);
+			}
+			if base.routeUpdate then {
+				route update;
+			}
+		}
+		if base.isSendThrottled() and not havePending then {
+			havePending:=true;
+			_setupThrottleListener();
+		}
+	}
+	
+	/**
+ 	 * Called to send a new Acknowledgement event.
+	 */
+	action emitAcknowledgement(integer messageId) {
+		Acknowledge ack:=Acknowledge(scenarioId, messageId, scenarioInstanceId, true, getUpdate());
+		if base.routeUpdate then {
+			route ack;
+		}
+		if base.emitAny then {
+			send ack to controlChannel;
+		}
+	}
+				
+	/**
+ 	 * Called to send a new Nak event.
+	 */
+	action emitNack(integer messageId) {
+		Acknowledge nack:=Acknowledge(scenarioId, messageId, scenarioInstanceId, false, new sequence<string>);
+		if base.routeUpdate then {
+			route nack;
+		}
+		if base.emitAny then {
+			send nack to controlChannel;
+		}
+	}
+	
+	/**
+ 	 * Called to send a new Created event.
+	 */
+	action emitCreated(integer messageId, string owner, string state, sequence<string> inputVariables, sequence<string> outputVariables) {
+		if base.sendAny then {
+			Created created:=Created(scenarioId, messageId, scenarioInstanceId, owner, state, inputVariables, outputVariables);
+			route created;
+			if base.emitAny then {
+				base.doEmit(created.toString(), owner);
+			}
+		}
+	}
+	
+	/**
+ 	 * Called to send a new Edited event.
+	 */
+	action emitEdited(integer messageId, sequence<string> inputVariables) {
+		flushPending();
+		if base.sendAny then {
+			Edited edited:=Edited(scenarioId, messageId, scenarioInstanceId, inputVariables, getUpdate());
+			if base.routeUpdate then {
+				route edited;
+			}
+			if base.emitAny then {
+				base.doEmit(edited.toString(), owner);
+			}
+		}
+		emitOpCompleted(messageId);
+	}
+
+	/**
+ 	 * Called to say an operation has completed; implied by emitEdited. Must be called before emitInstanceDied.
+	 */
+	action emitOpCompleted(integer messageId) {
+		if(context.current().getId()!=mainContext.getId()) then {
+			send OperationCompleted(scenarioId, scenarioInstanceId, messageId) to mainContext;
+		}
+	}
+
+	/**
+ 	 * Called to send a new Deleted event.
+	 */
+	action emitDeleted(integer messageId) {
+		flushPending();
+		if base.sendAny then {
+			Deleted deleted:=Deleted(scenarioId, messageId, scenarioInstanceId);
+			if base.routeUpdate then {
+				route deleted;
+			}
+			if base.emitAny then {
+				base.doEmit(deleted.toString(), owner);
+			}
+		}
+		throttlingListener.quit();
+		notifyInstanceDied();
+	}
+
+	/**
+ 	 * Called to send an instance Died event (either of failed, ended)
+	 */
+	action emitInstanceDied() {
+		flushPending();
+		if base.sendAny then {
+			InstanceDied iDied:=InstanceDied(scenarioId, scenarioInstanceId);
+			if base.emitAny then {
+				base.doEmit(iDied.toString(), owner);
+			}
+			if mainContext.getId()=context.current().getId() then {
+				route iDied;
+			}
+		}
+		throttlingListener.quit();
+	}
+
+	/**
+ 	 * Called to notify the scenario service monitor that we have gone away - must be called 
+ 	 * after emitting any events regarding this instance going away. Implied by emitDeleted.
+	 */
+	action notifyInstanceDied() {
+		if mainContext.getId()!=context.current().getId() then {
+			InstanceDied iDied:=InstanceDied(scenarioId, scenarioInstanceId);
+			
+			// give a chance for anyone monitoring this from its own context 
+			// to handle the InstanceDied before the main context
+			if base.routeUpdate then {
+				route InstanceDied(scenarioId, scenarioInstanceId);
+			}
+
+			send iDied to mainContext;
+		}
+	}
+	
+	/**
+ 	 * Called to send a new StateChange event.
+	 */
+	action emitStateChange(string state) {
+		flushPending();
+		StateChange stchange:=StateChange(scenarioId, scenarioInstanceId, state);
+		if mainContext.getId()!=context.current().getId() then {
+			send stchange to mainContext;
+		} else {
+			route stchange;
+		}
+		if base.emitAny then {
+			base.doEmit(stchange.toString(), owner);
+		}
+	}
+
+	/**
+ 	 * Called to send an instance in response to a RequestInstancesInternal event
+	 */
+	action emitInstance(RequestInstancesInternal request, string owner, string state, sequence<string> input, sequence<string> output) {
+		Instance instance:=Instance(scenarioId, request.messageId, scenarioInstanceId, owner, state, input, output);
+		if request.internal then {
+			if mainContext.getId() != context.current().getId() then {
+				send instance to mainContext;
+			} else {
+				route instance;
+			}
+		} else {
+			if(base.emitAny) then {
+				send instance to request.channel;
+			}
+		}
+		if mainContext.getId() != context.current().getId() then {
+			send RequestInstancesParallelDone(scenarioId, request.messageId, scenarioInstanceId) to mainContext;
+		}
+	}
+
+	/**
+ 	 * Called when the instance has failed.  input and output are the input
+ 	 * and output variables as at the last Update/ Edited point.
+	 */
+	action finished(string state, string owner, sequence<string> input, sequence<string> output) {
+		ScenarioFinished scenFinished:=ScenarioFinished(scenarioId, scenarioInstanceId, owner, state, input, output);
+		if mainContext.getId() != context.current().getId() then {
+			send scenFinished to mainContext;
+		} else {
+			route scenFinished;
+		}
+	}
+	
+}
+
+
+/**
+ * Utilitiy event for tracking configuration for a given scenario.
+ * This event is suitable for use by monitors which spawn per scenario,
+ * but not per instance. (e.g. ScenarioService, DataViewService)
+ * 
+ * actions starting with an underscore should be considered private 
+ * and not called by users of this event.
+ * 
+ * Note that this updater only honours sendThrottledUser changes at the next throttling period
+ * (it does not record the owner if sendThrottledUser is not true)
+ */
+event ScenarioServiceUpdaterMultipleInstances {
+	// these are internal and should not be set by users
+	string scenarioId;
+	ScenarioServiceLibrary lib;
+	listener throttlingListener;
+	ScenarioServiceUpdaterBase base;
+	boolean currentlySendingThrottledUser;
+	dictionary<integer, Update> updates;
+	dictionary<integer, string> owners;
+	context mainContext;
+	string controlChannel;
+	string rawChannel;
+	string dataChannel;
+
+	/**
+	 * Called by monitor for each scenario
+	 * Will maintain configuration for this scenario Id
+	 */
+	action init(string sId, context mainCtx) {
+		_init(sId, mainCtx, _configurationUpdated);
+	}
+	
+	/**
+	 * Called by monitor for each scenario
+	 * Will maintain configuration for this scenario Id
+	 */
+	action init_cb(string sId, context mainCtx, action<> cb_initComplete) {
+		CallbackHelper callbackHelper:=new CallbackHelper;
+		callbackHelper.callbacks.append(cb_initComplete);
+		callbackHelper.callbacks.append(_configurationUpdated);
+		_init(sId, mainCtx, callbackHelper.callback);
+	}
+
+	/**
+	 * Implementation of init and init_cb
+	 */
+	action _init(string sId, context mainCtx, action<> cb_initComplete) {
+		base.init(sId, cb_initComplete);
+		mainContext:=mainCtx;
+		scenarioId:=sId;
+		controlChannel := lib.getControlChannel(scenarioId);
+		rawChannel := lib.getRawChannel(scenarioId);
+		dataChannel := lib.getDataChannel(scenarioId);
+		listener l:=on all SendQueuedUpdatesNow() {
+			_sendThrottledUpdates();
+		}
+		base.listeners.append(l);
+		base.listenToConfigureUpdates(_configurationUpdated);
+	}
+	
+	/** 
+	 * Get whether this scenario should route updates
+	 */
+	action isRouteUpdate() returns boolean {
+		return base.routeUpdate;
+	}
+
+	/**
+ 	 * Kill any listeners this object has started
+	 */
+	action destroy() {
+		base.destroy();
+		throttlingListener.quit();
+	}
+	  
+
+	/**
+	 * called in instances (not factories) when configuration has changed
+	 */
+	action _configurationUpdated() {
+		if base.isSendThrottled() then {
+			throttlingListener.quit();
+			flushPending();
+			if(base.throttlePeriod >= 0.0) then {
+				_setupThrottleListener();
+			}
+		}
+	}
+
+	/**
+	 * set up a throttled listener according to throttlePeriod control
+	 */
+	action _setupThrottleListener() {
+		if base.throttlePeriod > 0.0 then {
+			throttlingListener:=on all wait(base.throttlePeriod) {
+				_sendThrottledUpdates();
+			}
+		} else {
+			_sendThrottledUpdates();
+		}
+	}
+
+	/**
+	 * actually send an update on the throttled channel
+	 */
+	action _sendThrottledUpdates() {
+		integer instance;
+		if base.sendThrottled then {
+			for instance in updates.keys() {
+				send updates[instance] to dataChannel;
+			}
+		}
+		if currentlySendingThrottledUser then {
+			for instance in updates.keys() {
+				send updates[instance] to lib.getDataUserChannel(dataChannel, owners[instance]);
+			}
+		}
+		owners.clear();
+		updates.clear();
+		currentlySendingThrottledUser := base.sendThrottledUser;
+	}
+
+	/**
+	 * flush any pending update on the throttled channel.
+	 */
+	action flushPending() {
+		_sendThrottledUpdates();
+	}	
+
+	/**
+ 	 * Flush pending throttled data for one instance
+	 */
+	action flushPendingInstance(integer scenarioInstanceId) {
+		if updates.hasKey(scenarioInstanceId) then {
+			if base.sendThrottled then {
+				send updates[scenarioInstanceId] to dataChannel;
+			}
+			if currentlySendingThrottledUser then {
+				send updates[scenarioInstanceId] to lib.getDataUserChannel(dataChannel, owners[scenarioInstanceId]);
+			}
+			updates.remove(scenarioInstanceId);
+			if owners.hasKey(scenarioInstanceId) then {
+				owners.remove(scenarioInstanceId);
+			}
+		}
+	}	
+
+	/**
+ 	 * Called when a new update is available. (This variant allows setting of the time parameter)
+	 */
+	action emitUpdate_time(integer scenarioInstanceId, float time, sequence<string> output, string owner) {
+		if base.sendAny then {
+			Update update:=Update(scenarioId, scenarioInstanceId, time, output);
+			if base.sendRaw then {
+				send update to rawChannel;
+			}
+			if base.sendRawUser then {
+				send update to lib.getRawUserChannel(rawChannel, owner);
+			}
+			if base.routeUpdate then {
+				route update;
+			}
+			if base.isSendThrottled() then {
+				if base.throttlePeriod > 0.0 then {
+					updates.add(scenarioInstanceId, update);
+					if currentlySendingThrottledUser then {
+						owners.add(scenarioInstanceId, owner);
+					}
+				} else {
+					send update to dataChannel;
+				}
+			}
+		}
+	}
+	
+	/**
+ 	 * Called when a new update is available.
+	 */
+	action emitUpdate(integer scenarioInstanceId, sequence<string> output, string owner) {
+		emitUpdate_time(scenarioInstanceId, currentTime, output, owner);
+	}
+
+	/**
+ 	 * Called to send a new Acknowledgement event.
+	 */
+	action emitAcknowledgement(integer messageId, integer scenarioInstanceId, sequence<string> output) {
+		Acknowledge ack:=Acknowledge(scenarioId, messageId, scenarioInstanceId, true, output);
+		if base.routeUpdate then {
+			route ack;
+		}
+		if base.emitAny then {
+			send ack to controlChannel;
+		}
+	}
+				
+	/**
+ 	 * Called to send a new Nak event.
+	 */
+	action emitNack(integer messageId, integer scenarioInstanceId) {
+		Acknowledge nack:=Acknowledge(scenarioId, messageId, scenarioInstanceId, false, new sequence<string>);
+		if base.routeUpdate then {
+			route nack;
+		}
+		if base.emitAny then {
+			send nack to controlChannel;
+		}
+	}
+	
+	/**
+ 	 * Called to send a new Created event.
+	 */
+	action emitCreated(integer messageId, integer scenarioInstanceId, string owner, string state, sequence<string> inputVariables, sequence<string> outputVariables) {
+		if base.sendAny then {
+			Created created:=Created(scenarioId, messageId, scenarioInstanceId, owner, state, inputVariables, outputVariables);
+			route created;
+			if base.emitAny then {
+				string sCreated:=created.toString();
+				base.doEmit(sCreated, owner);
+			}
+		}
+	}
+
+	/**
+ 	 * Called to send any received events (except for instance) for this scenario.
+	 */
+	action emitReceivedEvents() {
+		dictionary<integer, string> instanceOwners:=new dictionary<integer, string>;
+		{
+			Update update;
+			listener l:=on all Update(scenarioId = scenarioId):update {
+				if base.sendRaw then {
+					send update to rawChannel;
+				}
+				if base.sendRawUser and instanceOwners.hasKey(update.scenarioInstanceId) then {	
+					send update to lib.getRawUserChannel(rawChannel, instanceOwners[update.scenarioInstanceId]);
+				}
+				if base.isSendThrottled() then {
+					if base.throttlePeriod > 0.0 then {
+						updates.add(update.scenarioInstanceId, update);
+						string owner:="*";
+						if instanceOwners.hasKey(update.scenarioInstanceId) then {
+							owner:=instanceOwners[update.scenarioInstanceId];
+						}
+						if currentlySendingThrottledUser then {
+							owners.add(update.scenarioInstanceId, owner);
+						}
+					} else {
+						send update to dataChannel;
+					}
+				}
+			}
+			base.listeners.append(l);
+		}
+		{
+			Created created;
+			listener l:=on all Created(scenarioId = scenarioId):created {
+				if(created.owner != "*") then {
+					instanceOwners.add(created.scenarioInstanceId, created.owner);
+				}
+				base.doEmit(created.toString(), created.owner);				
+			}
+			base.listeners.append(l);
+		}
+		{
+			Deleted deleted;
+			listener l:=on all Deleted(scenarioId = scenarioId):deleted {
+				flushPendingInstance(deleted.scenarioInstanceId);
+				string owner:="*";
+				if instanceOwners.hasKey(deleted.scenarioInstanceId) then {
+					owner:=instanceOwners[deleted.scenarioInstanceId];
+					instanceOwners.remove(deleted.scenarioInstanceId);
+				}
+				base.doEmit(deleted.toString(), owner);		
+			}
+			base.listeners.append(l);
+		}
+		{
+			Edited edited;
+			listener l:=on all Edited(scenarioId = scenarioId):edited {
+				flushPendingInstance(edited.scenarioInstanceId);
+				string owner:="*";
+				if instanceOwners.hasKey(edited.scenarioInstanceId) then {
+					owner:=instanceOwners[edited.scenarioInstanceId];
+				}
+				base.doEmit(edited.toString(), owner);		
+			}
+			base.listeners.append(l);
+		}
+		{
+			InstanceDied instanceDied;
+			listener l:=on all InstanceDied(scenarioId = scenarioId):instanceDied {
+				flushPendingInstance(instanceDied.scenarioInstanceId);
+				string owner:="*";
+				if instanceOwners.hasKey(instanceDied.scenarioInstanceId) then {
+					owner:=instanceOwners[instanceDied.scenarioInstanceId];
+				}
+				base.doEmit(instanceDied.toString(), owner);		
+			}
+			base.listeners.append(l);
+		}
+	}
+	
+	/**
+ 	 * Called to send a new Edited event.
+	 */
+	action emitEdited(integer messageId, integer scenarioInstanceId, sequence<string> inputVariables, sequence<string> outputVariables, string owner) {
+		flushPendingInstance(scenarioInstanceId);
+		if base.sendAny then {
+			Edited edited:=Edited(scenarioId, messageId, scenarioInstanceId, inputVariables, outputVariables);
+			if base.routeUpdate then {
+				route edited;
+			}
+			if base.emitAny then {
+				base.doEmit(edited.toString(), owner);
+			}
+		}
+		emitOpCompleted(messageId, scenarioInstanceId);
+	}
+
+	/**
+ 	 * Called to say an operation has completed; implied by emitEdited. Must be called before emitInstanceDied.
+	 */
+	action emitOpCompleted(integer messageId, integer scenarioInstanceId) {
+		if(context.current().getId()!=mainContext.getId()) then {
+			send OperationCompleted(scenarioId, scenarioInstanceId, messageId) to mainContext;
+		}
+	}
+
+	/**
+ 	 * Called to send a new Deleted event.
+	 */
+	action emitDeleted(integer messageId, integer scenarioInstanceId, string owner) {
+		flushPendingInstance(scenarioInstanceId);
+		if base.sendAny then {
+			Deleted deleted:=Deleted(scenarioId, messageId, scenarioInstanceId);
+			if base.routeUpdate then {
+				route deleted;
+			}
+			if base.emitAny then {
+				base.doEmit(deleted.toString(), owner);
+			}
+		}
+		notifyInstanceDied(scenarioInstanceId);
+	}
+
+	/**
+ 	 * Called to notify the scenario service monitor that we have gone away - must be called 
+ 	 * after emitting any events regarding this instance going away. Implied by emitDeleted.
+	 */
+	action notifyInstanceDied(integer scenarioInstanceId) {
+		if mainContext.getId()!=context.current().getId() then {
+			InstanceDied iDied:=InstanceDied(scenarioId, scenarioInstanceId);
+			send iDied to mainContext;
+		}
+	}
+	
+
+	
+	/**
+ 	 * Called to send an instance Died event (either of failed, ended)
+	 */
+	action emitInstanceDied(integer scenarioInstanceId, string owner) {
+		flushPendingInstance(scenarioInstanceId);
+		if base.sendAny then {
+			InstanceDied iDied:=InstanceDied(scenarioId, scenarioInstanceId);
+			if base.emitAny then {
+				base.doEmit(iDied.toString(), owner);
+			}
+			if mainContext.getId()=context.current().getId() then {
+				route iDied;
+			}
+		}
+	}
+	
+	/**
+ 	 * Called to send a new StateChange event.
+	 */
+	action emitStateChange(string state, integer scenarioInstanceId, string owner) {
+		flushPendingInstance(scenarioInstanceId);
+		StateChange stchange:=StateChange(scenarioId, scenarioInstanceId, state);
+		if mainContext.getId()!=context.current().getId() then {
+			send stchange to mainContext;
+		} else {
+			route stchange;
+		}
+		if base.emitAny then {
+			base.doEmit(stchange.toString(), owner);
+		}
+	}
+
+	/**
+ 	 * Called to send an instance in response to a RequestInstancesInternal event
+	 */
+	action emitInstance(RequestInstancesInternal request, integer scenarioInstanceId, string owner, string state, sequence<string> input, sequence<string> output) {
+		Instance instance:=Instance(scenarioId, request.messageId, scenarioInstanceId, owner, state, input, output);
+		if request.internal then {
+			if mainContext.getId() != context.current().getId() then {
+				send instance to mainContext;
+			} else {
+				route instance;
+			}
+		} else {
+			if(base.emitAny) then {
+				send instance to request.channel;
+			}
+		}
+		if mainContext.getId() != context.current().getId() then {
+				send RequestInstancesParallelDone(scenarioId, request.messageId, scenarioInstanceId) to mainContext;
+		}
+	}
+	/**
+ 	 * Called to send an instance that has already been seen in the current context
+	 */
+	action emitReceivedInstance(RequestInstancesInternal request, Instance instance) {
+		if request.internal then {
+			if mainContext.getId() != context.current().getId() then {
+				send instance to mainContext;
+			}
+		} else {
+			if(base.emitAny) then {
+				send instance to request.channel;
+			}
+		}
+	}
+	
+}
+
+
+/*
+ * Monitor that performs the following tasks:
+ *   - routing/emitting ScenarioServiceLoaded when the service is loaded
+ *   - routing/emitting ScenarioServiceUnloaded when the service is unloaded
+ *   - routing/emitting a nack if a Create request is ignored
+ *   - maintains latest configuration
+ *   - tracks state of ended/ failed scenarios
+ *   - forwards Edit, delete events to scenarios in other contexts
+ *
+ */
+monitor ScenarioService {
+
+	event PendingOperation {
+		integer messageId;
+		integer type; // 0 = delete, 1 = edit
+	}
+
+	listener throttledSenderListener;
+	ScenarioServiceLibrary lib;
+	RequestScenarios requestScenarios;
+	boolean requestingScenarios;
+	
+	// MetaData relating to the interface
+	dictionary<string,string> interfaceMetaData := {
+		"interface.package"     :"com.apama.scenario",
+		"interface.name"        :"ScenarioService",
+		"interface.fileName"    :"ScenarioService.mon",
+		"interface.vendor"      :"Apama",
+		"interface.version"     :"9.10.0.3.284318",
+		"interface.fullVersion" :"rel/9.10.0.x@284318",
+		"interface.language"    :"MonitorScript"
+	};
+	
+	// Channel names	
+	string scenarioServiceChannel := "com.apama.scenario";
+	integer highestInstanceId;
+
+
+	// the first mThread handles scenario discovery and maps some events to internal events
+	action onload() {
+		// print version
+		log "ScenarioService interface loaded. MetaData: "+interfaceMetaData.toString() at INFO;
+		
+		// generate the ScenarioServiceLoaded event
+		route ScenarioServiceLoaded();
+		send ScenarioServiceLoaded() to scenarioServiceChannel;
+
+		dictionary <string,string> defaultConfig:=new dictionary<string,string>;
+		dictionary <string, dictionary<string,string> > configurations:=new dictionary<string, dictionary<string,string> >;
+		lib.configurationManager(defaultConfig, configurations);
+		RequestInstancesOnChannel requestInstancesOnChannel;
+		on all RequestInstancesOnChannel():requestInstancesOnChannel {
+			route RequestInstancesInternal(requestInstancesOnChannel.scenarioId, requestInstancesOnChannel.messageId, requestInstancesOnChannel.channel, false, "", false);
+			on RequestInstancesDone(scenarioId=requestInstancesOnChannel.scenarioId, messageId=requestInstancesOnChannel.messageId) {
+				send RequestInstancesDone(requestInstancesOnChannel.scenarioId, requestInstancesOnChannel.messageId) to requestInstancesOnChannel.channel;
+			}
+		}
+
+		RequestInstancesOnChannelByUser requestInstancesOnChannelByUser;
+		on all RequestInstancesOnChannelByUser():requestInstancesOnChannelByUser {
+			route RequestInstancesInternal(requestInstancesOnChannelByUser.scenarioId, requestInstancesOnChannelByUser.messageId, requestInstancesOnChannelByUser.channel, false, requestInstancesOnChannelByUser.owner, true);
+			on RequestInstancesDone(scenarioId=requestInstancesOnChannelByUser.scenarioId, messageId=requestInstancesOnChannelByUser.messageId) {
+				send RequestInstancesDone(requestInstancesOnChannelByUser.scenarioId, requestInstancesOnChannelByUser.messageId) to requestInstancesOnChannelByUser.channel;
+			}
+		}
+		Scenario scenario;
+		on all Scenario():scenario {
+			if requestingScenarios then {
+				send scenario to requestScenarios.channel;
+			} else {
+				spawn trackScenario(scenario);
+			}
+		}
+		
+		ScenarioUnloaded scenarioUnloaded;
+		on all ScenarioUnloaded(): scenarioUnloaded {
+			send scenarioUnloaded to scenarioServiceChannel;
+		}
+
+		
+		on all RequestScenarios():requestScenarios {
+			send RequestScenariosAck() to requestScenarios.channel;
+			route StartScenarioRecovery();
+			route FinishedScenarioRecovery();
+			requestingScenarios:=true;
+			on FinishedScenarioRecovery() {
+				requestingScenarios:=false;
+				send RequestScenariosDone() to requestScenarios.channel;
+			}
+		}
+
+		dictionary <string,string> EMPTY_DICT:=new dictionary<string,string>;
+		// Pick up any requests for operations on invalid scenarioIds
+		Create create;
+		on all unmatched Create(): create {
+			dictionary<string,string> config:=EMPTY_DICT;
+			if configurations.hasKey(create.scenarioId) then {
+				config:=configurations[create.scenarioId];
+			}
+			Acknowledge nack := new Acknowledge;
+			nack.scenarioId := create.scenarioId;
+			nack.messageId := create.messageId;
+			nack.success := false;
+			log create.scenarioId+": Scenario create ignored - unknown scenarioId." at WARN;
+			send nack to lib.getControlChannel(create.scenarioId);
+			if lib.getRouteUpdate(defaultConfig, config) then {
+				route nack;
+			}
+		}
+
+		// The old SetThrottlingPeriod is mapped to a ConfigureUpdates event
+		SetThrottlingPeriod setThrottlingPeriod;		
+		on all SetThrottlingPeriod():setThrottlingPeriod {
+			dictionary<string, string> configChanges:=new dictionary<string,string>;
+			if setThrottlingPeriod.period >= 0.0 then {
+				configChanges["sendThrottled"]:="true";
+				configChanges["throttlePeriod"]:=setThrottlingPeriod.period.toString();
+			} else {
+				configChanges["sendThrottled"]:="false";
+			}
+			ConfigureUpdates cu:=ConfigureUpdates("", configChanges);
+			log "Received deprecated event "+setThrottlingPeriod.toString()+", will re-route as "+cu.toString() at WARN;
+			route cu;
+		}
+	}		
+				
+	
+	action onunload() {
+		// generate the ScenarioServiceUnloaded event
+		ScenarioServiceUnloaded unloaded := new ScenarioServiceUnloaded;
+		route unloaded;
+		send unloaded to scenarioServiceChannel;
+	}
+	
+	/**
+	 * spawned per scenario, and handles any finished scenario instances.
+	 * For parallel scenarios, it also tracks which instance runs in 
+	 * which context and forwards Edit and Delete events.
+	 */
+	action trackScenario(Scenario scenario) {
+		on ScenarioUnloaded(scenarioId=scenario.scenarioId) {
+			die;
+		}
+		ScenarioServiceUpdaterMultipleInstances updater:=new ScenarioServiceUpdaterMultipleInstances;
+		updater.init(scenario.scenarioId, context.current());
+		ScenarioFinished finished;
+		on all ScenarioFinished(scenarioId=scenario.scenarioId):finished {
+			// Finished scenarios can be deleted (which terminates all listeners for this instance), 
+			// discovered, and edits are Nacked 
+			Delete delete;
+			on Delete(scenarioId=scenario.scenarioId, scenarioInstanceId = finished.scenarioInstanceId):delete {
+				updater.emitAcknowledgement(delete.messageId, finished.scenarioInstanceId, finished.outputFieldValues);
+				updater.emitDeleted(delete.messageId, finished.scenarioInstanceId, finished.owner);
+			}
+			Edit edit;
+			on all Edit(scenarioId=scenario.scenarioId, scenarioInstanceId=finished.scenarioInstanceId):edit and not 
+			            Delete(scenarioId=scenario.scenarioId, scenarioInstanceId = finished.scenarioInstanceId) {
+				updater.emitNack(edit.messageId, finished.scenarioInstanceId);
+				log scenario.displayName+"("+finished.scenarioInstanceId.toString()+ "): Scenario edit ignored - Scenario is in "+finished.state+" state." at WARN;
+			}
+			RequestInstancesInternal requestInstances;
+			if finished.owner = "*" then {
+				on all RequestInstancesInternal(scenarioId=scenario.scenarioId):requestInstances and not
+						Delete(scenarioId=scenario.scenarioId, scenarioInstanceId = finished.scenarioInstanceId) {
+					updater.emitInstance(requestInstances, finished.scenarioInstanceId,
+						finished.owner, finished.state, finished.inputFieldValues, finished.outputFieldValues);
+				}
+			} else {
+				on all (RequestInstancesInternal(scenarioId=scenario.scenarioId, ownerFilter=false):requestInstances or
+					RequestInstancesInternal(scenarioId=scenario.scenarioId, owner=finished.owner, ownerFilter=true):requestInstances) and not
+						Delete(scenarioId=scenario.scenarioId, scenarioInstanceId = finished.scenarioInstanceId) {
+					updater.emitInstance(requestInstances, finished.scenarioInstanceId,
+						finished.owner, finished.state, finished.inputFieldValues, finished.outputFieldValues);
+				}
+			}
+		}
+		if scenario.executionMode > 0 then {
+			// for parallel scenarios, we keep track of instance to context mapping:
+			dictionary<integer, context> runningCtxs := new dictionary<integer, context>;
+			// and to owner mapping:
+			dictionary<integer, string> ownerCtxs := new dictionary<integer, string>;
+			// and by user:
+			dictionary<string, dictionary<integer, context> > runningCtxsByOwner := new dictionary<string, dictionary<integer, context> >;
+			// maps from instanceId to sequence<messageId>
+			dictionary<integer, sequence<PendingOperation> > pendingOperations := new dictionary<integer, sequence<PendingOperation> >;
+			ParallelStarting starting;
+			on all ParallelStarting(scenarioId = scenario.scenarioId):starting {
+				runningCtxs.add(starting.scenarioInstanceId, starting.runningCtx);
+				ownerCtxs.add(starting.scenarioInstanceId, starting.owner);
+				if not runningCtxsByOwner.hasKey(starting.owner) then {
+					runningCtxsByOwner.add(starting.owner, new dictionary<integer, context>);
+				}
+				runningCtxsByOwner[starting.owner].add(starting.scenarioInstanceId, starting.runningCtx);
+				highestInstanceId := starting.scenarioInstanceId;
+			}
+			
+			InstanceDied died;
+			on all InstanceDied(scenarioId = scenario.scenarioId):died {
+				if runningCtxs.hasKey(died.scenarioInstanceId) then {
+					runningCtxs.remove(died.scenarioInstanceId);
+				}
+				if ownerCtxs.hasKey(died.scenarioInstanceId) then {
+					string owner:=ownerCtxs[died.scenarioInstanceId];
+					ownerCtxs.remove(died.scenarioInstanceId);
+					if runningCtxsByOwner.hasKey(owner) then {
+						if runningCtxsByOwner[owner].hasKey(died.scenarioInstanceId) then {
+							runningCtxsByOwner[owner].remove(died.scenarioInstanceId);
+						}
+						if runningCtxsByOwner[owner].size()=0 then {
+							runningCtxsByOwner.remove(owner);
+						}
+					}
+				}
+				if pendingOperations.hasKey(died.scenarioInstanceId) then {
+					PendingOperation pending;
+					for pending in pendingOperations[died.scenarioInstanceId] {
+						if pending.type = 0 then {
+							route Delete(scenario.scenarioId, pending.messageId, died.scenarioInstanceId);
+						} else {
+							if pending.type = 1 then {
+								route Edit(scenario.scenarioId, pending.messageId, died.scenarioInstanceId, new sequence<string>);
+							} else {
+								log "error: unknown pending operation type "+pending.toString() at ERROR;
+							}
+						}
+					}
+					pendingOperations.remove(died.scenarioInstanceId);
+				}
+			}
+			
+			// and forward edits, deletes:
+			Edit edit;
+			on all unmatched Edit(scenarioId = scenario.scenarioId):edit {
+				if runningCtxs.hasKey(edit.scenarioInstanceId) then {
+					send edit to runningCtxs[edit.scenarioInstanceId];
+					addPendingOperation(pendingOperations, edit.scenarioInstanceId, edit.messageId, 1);
+					on OperationCompleted(scenarioId = scenario.scenarioId, scenarioInstanceId = edit.scenarioInstanceId, messageId = edit.messageId) and not
+					   ScenarioFinished(scenarioId = scenario.scenarioId, scenarioInstanceId = edit.scenarioInstanceId){
+						removePendingOperation(pendingOperations, edit.scenarioInstanceId, edit.messageId);
+					}
+				} else {
+					log scenario.displayName+"("+edit.scenarioInstanceId.toString()+"): Scenario edit ignored - unknown scenarioInstanceId." at WARN;
+					updater.emitNack(edit.messageId, edit.scenarioInstanceId);
+				}
+			}
+			Delete delete;
+			on all unmatched Delete(scenarioId = scenario.scenarioId):delete {
+				if runningCtxs.hasKey(delete.scenarioInstanceId) then {
+					send delete to runningCtxs[delete.scenarioInstanceId];
+					addPendingOperation(pendingOperations, delete.scenarioInstanceId, delete.messageId, 0);
+					on OperationCompleted(scenarioId = scenario.scenarioId, scenarioInstanceId = delete.scenarioInstanceId, messageId = delete.messageId) and not
+					   ScenarioFinished(scenarioId = scenario.scenarioId, scenarioInstanceId = delete.scenarioInstanceId){
+						removePendingOperation(pendingOperations, delete.scenarioInstanceId, delete.messageId);
+					}
+				} else {
+					log scenario.displayName+"("+delete.scenarioInstanceId.toString()+"): Scenario delete ignored - unknown scenarioInstanceId." at WARN;
+					updater.emitNack(delete.messageId, delete.scenarioInstanceId);
+				}
+			}
+			
+			// and request instances is handled by a separate monitor. Note that 
+			// Finished scenarios are not in the dictionary, but are handled by the finished
+			// listener above.
+			RequestInstancesInternal reqInstances;
+			on all RequestInstancesInternal(scenarioId=scenario.scenarioId):reqInstances {
+				if reqInstances.ownerFilter then {
+					if runningCtxsByOwner.hasKey(reqInstances.owner) then {
+						dictionary<integer, context> rCtxs:=runningCtxsByOwner[reqInstances.owner];
+						if runningCtxsByOwner.hasKey("*") then {
+							rCtxs:=rCtxs.clone();
+							integer i;
+							dictionary<integer, context> wildcards:=runningCtxsByOwner["*"];
+							for i in wildcards.keys() {
+								rCtxs.add(i, wildcards[i]);
+							}
+						}
+						route RequestInstancesParallel(reqInstances, rCtxs, highestInstanceId);
+					} else {
+						if runningCtxsByOwner.hasKey("*") then {
+							route RequestInstancesParallel(reqInstances, runningCtxsByOwner["*"], highestInstanceId);
+						} else {
+							route RequestInstancesParallel(reqInstances, new dictionary<integer,context>, highestInstanceId);
+						}
+					}
+				} else {
+					route RequestInstancesParallel(reqInstances, runningCtxs, highestInstanceId);
+				}
+			}
+			ConfigureUpdates cu;
+			on all ConfigureUpdates(scenarioId=""):cu or all ConfigureUpdates(scenarioId=scenario.scenarioId):cu {
+				integer inst;
+				for inst in runningCtxs.keys() {
+					send cu to runningCtxs[inst];
+				}
+			}
+			on all SendQueuedUpdatesNow() {
+				SendQueuedUpdatesNow snow:=SendQueuedUpdatesNow();
+				integer inst;
+				for inst in runningCtxs.keys() {
+					send snow to runningCtxs[inst];
+				}
+			}
+		}
+	}
+	
+	action addPendingOperation(dictionary<integer,  sequence<PendingOperation> > pendingOperations, integer scenarioInstanceId, integer messageId, integer type) {
+		if not pendingOperations.hasKey(scenarioInstanceId) then {
+			pendingOperations.add(scenarioInstanceId, new sequence<PendingOperation>);
+		}
+		pendingOperations[scenarioInstanceId].append(PendingOperation(messageId, type));
+	}
+	
+	action removePendingOperation(dictionary<integer, sequence<PendingOperation> > pendingOperations, integer scenarioInstanceId, integer messageId) {
+		if not pendingOperations.hasKey(scenarioInstanceId) then {
+			return;
+		}
+		integer idx:=-1, i:=0;
+		while(i < pendingOperations[scenarioInstanceId].size()) {
+			if pendingOperations[scenarioInstanceId][i].messageId = messageId then {
+				idx:=i;
+				break;
+			}
+			i:=i+1;
+		}
+		if(idx>=0) then {
+			pendingOperations[scenarioInstanceId].remove(idx);
+		}
+		if pendingOperations[scenarioInstanceId].size() = 0 then {
+			pendingOperations.remove(scenarioInstanceId);
+		}
+	}	
+}
+
+/*
+ * Monitor that handles request instances for parallel scenarios:
+ * - on a RequestInstancesOnChannel for a parallel scenario, the ScenarioService 
+ *   routes a RequestInstancesParallel which triggers this monitor to spawn.
+ * - this waits for a response (be it to say the request instances has been 
+ *   handled or that the scenario has finished) before sending the 
+ *   RequestInstancesDone event 
+ *
+ * Note that this monitor assumes scenarioInstancesIds always increase over time.
+ */
+monitor RequestInstancesHandler {
+	RequestInstancesParallel req;
+	action onload() {
+		on all RequestInstancesParallel():req {
+			spawn handleRequest();
+		}
+	}
+	
+	/**
+	 * Forward the request to every context and await responses. We remove 
+	 * instances from the dictionary upon receiving an update for them. 
+	 */
+	action handleRequest() {
+		ScenarioServiceUpdaterMultipleInstances updater:=new ScenarioServiceUpdaterMultipleInstances;
+		updater.init(req.request.scenarioId, context.current());
+		integer k;
+		for k in req.instances.keys() {
+			send req.request to req.instances[k];
+		}
+		// if a scenario dies, it will send events in the order ScenarioFinished, InstanceDied:
+		ScenarioFinished finished;
+		on all ScenarioFinished(scenarioId=req.request.scenarioId, scenarioInstanceId <= req.highestInstanceId):finished {
+			// if a scenario dies after it has sent the Instance, do not send another 
+			// (the StateChange/ InstanceDied events are sufficient)
+			if(req.instances.hasKey(finished.scenarioInstanceId)) then {
+				updater.emitInstance(req.request, finished.scenarioInstanceId,
+					finished.owner, finished.state, finished.inputFieldValues, finished.outputFieldValues);
+			}
+		}
+		// A finished scenario should not be counted
+		InstanceDied died;
+		on all InstanceDied(scenarioId = req.request.scenarioId, scenarioInstanceId <= req.highestInstanceId):died {
+			if(req.instances.hasKey(died.scenarioInstanceId)) then {
+				req.instances.remove(died.scenarioInstanceId);
+				checkFinished();
+			}
+		}
+		RequestInstancesParallelDone pdone;
+		on all RequestInstancesParallelDone(scenarioId = req.request.scenarioId, messageId = req.request.messageId):pdone {
+			if(req.instances.hasKey(pdone.scenarioInstanceId)) then {
+				req.instances.remove(pdone.scenarioInstanceId);
+				checkFinished();
+			}
+		}
+		checkFinished();
+	}
+	
+	/**
+	 * Check whether we are finished.
+	 * We are finished if we have no instances left in our dictionary, in which 
+	 * case we route a RequestInstancesDone (handled by the ScenarioService monitor)
+	 * and terminate.
+	 */
+	action checkFinished() {
+		if req.instances.size()=0 then {
+			route RequestInstancesDone(req.request.scenarioId, req.request.messageId);
+			die;
+		}
+	}
+}
+
+ 00000030 C:\SoftwareAG\Apama\monitors\ScenarioService.mon
+TIME 0000000e 1471744746.1,1
+MONF 00000528 //*****************************************************************************
+// Title:       ScenarioDeleterSupport
+// Description: Provides event definitions for deleting Scenario instances. 
+//
+// Revision:    $Id: ScenarioDeleterSupport.mon 249541 2015-03-09 11:42:24Z bsp $
+//
+// $Copyright(c) 2004-2005, 2008-2009 Progress Software Corporation (PSC). All rights reserved.$
+// $Copyright (c) 2013-2014 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.$
+// Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG
+//
+//*****************************************************************************
+
+package com.apama.scenarios;
+
+event DeleteAllScenarios {
+	constant string CHANNEL := "ScenarioDeleter";
+}
+
+event DeleteScenariosByUser {
+	string owner;
+}
+
+monitor ScenarioDeleterSupport {
+	
+	action onload() {
+		
+		DeleteAllScenarios deleteAll;
+		on all DeleteAllScenarios():deleteAll {
+			send deleteAll to DeleteAllScenarios.CHANNEL;
+		}
+		
+		DeleteScenariosByUser deleteByUser;
+		on all DeleteScenariosByUser():deleteByUser {
+			send deleteByUser to DeleteAllScenarios.CHANNEL;
+		}
+	}
+	
+} 00000048 C:\SoftwareAG\Apama\monitors\scenario_support\ScenarioDeleterSupport.mon
+MONF 000003f8 //*****************************************************************************
+// Title:         WeatherServiceEvents
+// Description:   WeatherServiceEvents description
+// Dependencies:  None
+// Author:        IEUser
+//
+//*****************************************************************************
+
+
+event MyZIP {
+	string ZIP;
+}
+
+event GetCityWeatherByZIPType {
+	string ZIP;
+}
+
+event GetCityWeatherByZIPResultType {
+	string Success;
+	string ResponseText;
+	string State;
+	string City;
+	string WeatherStationCity;
+	string WeatherID;
+	string Description;
+	string Temperature;
+	string RelativeHumidity;
+	string Wind;
+	string Pressure;
+	string Visibility;
+	string WindChill;
+	string Remarks;	
+}
+
+event GetCityWeatherByZIPResponseType {
+	GetCityWeatherByZIPResultType GetCityWeatherByZIPResult;
+}
+
+event MyRequest {
+	GetCityWeatherByZIPType GetCityWeatherByZIP;
+}
+
+event MyResponse {
+	GetCityWeatherByZIPResponseType GetCityWeatherByZIPResponse;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 0000005c C:\Users\IEUser\workspace910\WeatherWebServiceDemo\eventdefinitions\WeatherServiceEvents.mon
+MONF 00001a4d 
+/*
+ *
+ * DO NOT MODIFY THIS FILE. This is AUTO-GENERATED. 
+ * Monitor for handling Webservice requests. 
+ */
+ 
+
+package com.apama.ws.service;
+
+using com.apama.adapters.AdapterStatusDeregister;
+using com.apama.adapters.AdapterStatusRegister;
+using com.apama.statusreport.SubscribeStatus;
+using com.apama.statusreport.UnsubscribeStatus;
+using com.apama.statusreport.Status;
+using com.apama.statusreport.StatusError;
+using com.apama.adapters.AdapterError;
+using com.apama.adapters.AdapterUp;
+
+using com.apama.ws.WSRequest;
+using com.apama.ws.WSError;
+using com.apama.ws.WSConstants;
+
+
+/**
+ * This generated monitor handles the caf requests.  It encodes and forwards it
+ * to the WebService Adapter service. 
+ *
+ * Interested monitors should register for status via the
+ * com.apama.statusreport.SubscribeStatus event using the service name
+ * "Webservice_INSTANCE_1".
+ */
+monitor WS_Client_INSTANCE_1
+{
+	// The application needs to use this service id to register for status
+	constant string SERVICE_ID := "Webservice_INSTANCE_1";
+	constant string ADAPTER_NAME := "Webservice_INSTANCE_1"; // same as service id
+	
+	// Constants.
+	constant string CODEC_NAME := "WSDataMessageCodec";
+	constant string CHANNEL_NAME := "WebServices_INSTANCE_1";
+	constant string TRANSPORT_NAME := "WebServices_INSTANCE_1";  // Same as channel name
+	constant string MONITOR_NAME := "WS_Client_INSTANCE_1";
+	
+	WSConstants wsConstant;
+	
+	// Status support.
+	Status statusEvent;
+    StatusError statusErrorEvent;
+    AdapterUp adapterUpEvent;
+    AdapterError adapterErrorEvent;
+	
+	// Keep track of the number of status subscriptions from the application
+    // so we won't stop sending status events until all subscribers are gone.
+    integer statusSubscriptionCount := 0;
+	
+	// Summary strings.  These may be used in the summary for the
+    // Status event to the application.
+    string CONNECTED := "Connected";
+
+	// Names of events to be persisted
+	sequence<string> eventNames := [
+		"MyRequest"				
+		];
+	
+	// flag to indicate that the Webservice adapter is up and available
+	boolean adapterUp := false;
+	
+	action onload()
+	{
+		log "Loaded WS Client service: " + SERVICE_ID at INFO;
+		log "   Supported events: " + eventNames.toString() at INFO;
+		
+		// Register for IAFStatus events
+        route AdapterStatusRegister(ADAPTER_NAME, CODEC_NAME, TRANSPORT_NAME, "", "", "", CHANNEL_NAME);
+		
+		// setup listerers for status  
+		setupListenersForStatus();
+		
+		// setup listeners for requests in this context
+		listenForClientRequests();
+	}
+	
+	action setupListenersForStatus()
+	{
+		
+		on all SubscribeStatus(serviceID = "") or
+            all SubscribeStatus(serviceID = SERVICE_ID)
+        {
+            statusSubscriptionCount := statusSubscriptionCount + 1;
+            
+            // When an application first subscribes, send out a status.
+            sendStatusReport();
+        }
+        
+        on all UnsubscribeStatus(serviceID = "") or
+            all UnsubscribeStatus(serviceID = SERVICE_ID)
+        {
+            statusSubscriptionCount := statusSubscriptionCount - 1;
+        }
+		
+		on all AdapterUp(adapterName = ADAPTER_NAME):adapterUpEvent
+        {
+            if (adapterUpEvent.transportStatus.hasKey("CONNECTION")) then {
+        		log (ADAPTER_NAME + " adapter is up: " + adapterUpEvent.toString()) at DEBUG;
+       			adapterUp := true;
+    		} else {
+        		log (ADAPTER_NAME + " adapter is down: " + adapterUpEvent.toString()) at ERROR;
+	        	adapterUp := false;
+    		}
+    		// Update status info and send to application.
+            sendStatusReport();
+        }
+						
+        on all AdapterError(adapterName = ADAPTER_NAME):adapterErrorEvent
+        {
+            log (ADAPTER_NAME + " adapter is down: " + adapterErrorEvent.toString()) at ERROR;
+
+            // Update status info and send to application.
+            adapterUp := false;
+            
+            sendStatusReport();
+        }		
+		
+	}
+	
+	/**
+     * Send a Status event if we have subscribers.
+     */
+    action sendStatusReport()
+    {
+        statusEvent.summaries := new sequence<string>;
+        if (statusSubscriptionCount > 0) then
+        {
+			statusEvent.serviceID := SERVICE_ID;
+            if (adapterUp) then
+            {
+                statusEvent.description := ADAPTER_NAME + " adapter up.";
+                statusEvent.available := true;
+                statusEvent.summaries.append(CONNECTED);
+            }
+            else
+            {
+                statusEvent.description := ADAPTER_NAME + " adapter is not up.";
+                statusEvent.available := false;
+            }                             
+            route statusEvent;                      
+        }
+    }	
+	
+	/**
+	 * This action sets up the listeners for the request events. 
+	 */
+	action listenForClientRequests()
+	{		
+		// Create listener for request(MyRequest) event
+		MyRequest evt_1;
+		on all MyRequest():evt_1
+		{
+				handleRequest(evt_1.toString(), "INSTANCE_1_Weather_WeatherSoap_GetCityWeatherByZIP_routeOperation_1", context.current());
+		}				
+	}
+	
+	action handleRequest(string eventStr, string beanId, context sourceContext)
+	{
+		if (adapterUp) then {
+
+			// create the WS client request event
+			WSRequest request := new WSRequest;
+			request.endpointId := beanId;
+			request.requestId:= integer.getUnique().toString();
+			request.eventStr := eventStr;
+			log "WS client request: " + request.toString() at DEBUG;
+
+			// route the request
+			emit request to CHANNEL_NAME;
+		}
+		else
+		{	
+			string errMsg := "WS Client Adapter unavailable. Unable to send the request: " + eventStr;
+			dictionary<string,string> extraParams := {};
+			sendErrorMessage(eventStr,errMsg, wsConstant.getAdapterDownType(),extraParams,sourceContext);
+			log errMsg at WARN;
+		}
+	}
+	
+	/**
+	 * Sends error message to given context;
+	 */
+	action sendErrorMessage(string requestEvent,string errMsg,string failureType,dictionary<string, string> extraParams,context sourceContext)
+	{
+		extraParams.add("serviceId",SERVICE_ID);
+		WSError error := WSError(requestEvent, errMsg,failureType,extraParams);
+		enqueue error to sourceContext;
+	}
+	
+	/**
+     * Handle any cleanup.
+     */
+    action ondie()
+    {
+		// Unsubscribe from IAFStatusManager
+		route AdapterStatusDeregister(ADAPTER_NAME);
+		
+		statusErrorEvent.serviceID := SERVICE_ID;
+		statusErrorEvent.description := MONITOR_NAME + " is dying.";
+		statusErrorEvent.failed := true;
+		route statusErrorEvent;
+			
+		log MONITOR_NAME + " has been asked to terminate.  Removing monitor now." at INFO;
+    }
+}
+
+ 00000080 C:\Users\IEUser\workspace910\WeatherWebServiceDemo\bundle_instance_files\WebService_Adapter\Generated\WebServices_instance_1.mon
+MONF 00000385 //*****************************************************************************
+// Title:         WeatherServiceMonitor
+// Description:   WeatherServiceMonitor description
+// Dependencies:  None
+// Author:        IEUser
+//
+//*****************************************************************************
+
+
+
+// TODO: Monitors and event definitions here
+
+monitor WeatherServiceMonitor {
+	MyRequest myRequest;
+	MyResponse myResponse;
+	MyZIP myZIP;
+	
+	action onload() {
+		
+		route myRequest;
+		
+		print "Hello World"; 
+		
+		on all MyZIP(): myZIP {
+			print "Received request for ZIP code : " + myZIP.ZIP;
+			print "Preparing to call the service " ;
+			myRequest.GetCityWeatherByZIP.ZIP := myZIP.ZIP;
+			route myRequest;
+			 
+		}
+		
+		on all MyResponse(): myResponse {
+			print "City; " + myResponse.GetCityWeatherByZIPResponse.GetCityWeatherByZIPResult.City;
+		}
+		
+	}
+} 00000055 C:\Users\IEUser\workspace910\WeatherWebServiceDemo\monitors\WeatherServiceMonitor.mon
+DISC 0000003e 12303782014269980672:12309072542154686464 from 127.0.0.1:50592
+TIME 0000000e 1471744746.2,1
+EVNT 00000164 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(1,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,true,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744751.1,1
+EVNT 00000165 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(2,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744753.7,1
+EVNT 00000083 6321095548145241858 "",com.apama.adapters.AdapterConnectionOpened("WSDataMessageCodec","WebServices_INSTANCE_1","","1471744745046")
+TIME 0000000e 1471744756.1,1
+EVNT 00000182 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(3,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744761.1,1
+EVNT 00000182 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(4,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744766.1,1
+EVNT 00000182 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(5,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744771.1,1
+EVNT 00000182 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(6,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744776.1,1
+EVNT 00000182 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(7,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744781.1,1
+EVNT 00000182 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(8,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744786.1,1
+EVNT 00000182 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(9,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744791.1,1
+EVNT 00000183 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(10,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744796.1,1
+EVNT 00000183 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(11,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744801.1,1
+EVNT 00000183 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(12,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744806.1,1
+EVNT 00000183 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(13,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744811.1,1
+EVNT 00000183 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(14,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744816.1,1
+EVNT 00000183 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(15,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744821.1,1
+EVNT 00000183 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(16,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744826.1,1
+EVNT 00000183 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(17,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744831.1,1
+EVNT 00000183 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(18,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744836.1,1
+EVNT 00000183 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(19,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744841.1,1
+EVNT 00000183 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(20,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744846.1,1
+EVNT 00000183 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(21,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744851.1,1
+EVNT 00000183 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(22,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744856.1,1
+EVNT 00000183 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(23,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})
+TIME 0000000e 1471744861.1,1
+EVNT 00000183 6321095548145241858 "",com.apama.adapters.IAFStatusResponse_1(24,1,16903,"C:\\Users\\IEUser\\workspace910\\.metadata\\.plugins\\org.eclipse.core.resources\\.projects\\WeatherWebServiceDemo\\com.apama.text\\WebServices_instance_1.xml","WSDataMessageCodec","WebServices_INSTANCE_1",true,false,{"VERSION":"9.10.0.3"},{"CONFIG_VERSION":"1","CONNECTION":"1471744745046","VERSION":"9.10.0.3"})

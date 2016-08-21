@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:camel="http://camel.apache.org/schema/spring"  
+	xmlns:cxf="http://camel.apache.org/schema/cxf" 
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs" 
+	xmlns:wx="http://ws.cdyne.com/WeatherWS/"  
+	xmlns:cafBinding="http://www.progress.com/caf/binding/strategy" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd 
+	http://camel.apache.org/schema/cxf 
+	http://camel.apache.org/schema/cxf/camel-cxf.xsd 
+	http://camel.apache.org/schema/spring 
+	http://camel.apache.org/schema/spring/camel-spring.xsd 
+	http://www.progress.com/caf/binding/strategy 
+	http://www.progress.com/caf/binding/cafBinding.xsd">  
+
+ <!-- <import resource="${Default_WebService_SOAPBinding_Bean_Definition_Location}"></import> -->
+ 
+	<routeContext id="Weather_WeatherSoap_GetCityWeatherByZIP_route" xmlns="http://camel.apache.org/schema/spring"> 
+		<route id="Weather_WeatherSoap_GetCityWeatherByZIP_route"> 
+			 <camel:from uri="cafDirect:Weather_WeatherSoap_GetCityWeatherByZIP_route?bindingStrategy=#${DefaultSoapBindingStrategy_Weather_WeatherSoap_GetCityWeatherByZIP_route}&amp;headerFilterStrategy=#${GlobalSoapHeaderFilterStrategy_Weather_WeatherSoap_GetCityWeatherByZIP_route}"/>
+			 <camel:setHeader headerName="operationName">
+				<camel:constant>${operationName_Weather_WeatherSoap_GetCityWeatherByZIP_route}</camel:constant>
+			 </camel:setHeader>			
+			 <camel:setHeader headerName="operationNamespace">
+				 <camel:constant>http://ws.cdyne.com/WeatherWS/</camel:constant> 
+			 </camel:setHeader>
+			 
+			 <camel:to uri="cxf:bean:CXF_Weather_WeatherSoap?synchronous=${synchronous_Weather_WeatherSoap_GetCityWeatherByZIP_route}"/>
+		</route> 
+	</routeContext> 
+
+
+	<cxf:cxfEndpoint 
+		id="CXF_Weather_WeatherSoap" 
+		address="${address_Weather_WeatherSoap_GetCityWeatherByZIP_route}" 
+		endpointName="wx:${portName_Weather_WeatherSoap_GetCityWeatherByZIP_route}" 
+		serviceName="wx:${serviceName_Weather_WeatherSoap_GetCityWeatherByZIP_route}" 
+		wsdlURL="${wsdlURL_Weather_WeatherSoap_GetCityWeatherByZIP_route}">
+	    <cxf:properties>
+	      <entry key="mtom-enabled" value="${CXF_mtom_enabled_Weather_WeatherSoap_GetCityWeatherByZIP_route}"/>                                                                         
+	      <entry key="dataFormat" value="${CXF_dataFormat_Weather_WeatherSoap_GetCityWeatherByZIP_route}"/>
+	    </cxf:properties>
+	</cxf:cxfEndpoint>
+	
+	<bean id="DefaultSoapBindingStrategy_Weather_WeatherSoap_GetCityWeatherByZIP_route" class="${Default_WebService_SOAPBinding_class}">   
+    	<property name="BaseBindingStrategy">
+        	<ref bean="SoapRuleBasedBindingStrategy_Weather_WeatherSoap_GetCityWeatherByZIP_route" />
+	    </property>
+	</bean>
+	
+	
+	<bean id="SoapRuleBasedBindingStrategy_Weather_WeatherSoap_GetCityWeatherByZIP_route" class="${Default_RuleBased_WebService_SOAPBinding_class}">   
+		<!-- refer binding rules -->
+	    <property name="BindingRules">
+	        <ref bean="${bindingRulesBean_Weather_WeatherSoap_GetCityWeatherByZIP_route}" />
+	    </property>
+	    <!-- Other properties like MTOM etc -->
+	</bean>
+	
+	 <bean id="GlobalSoapHeaderFilterStrategy_Weather_WeatherSoap_GetCityWeatherByZIP_route" class="${Default_WebService_SOAPBinding_GlobalSoapHeaderFilterStrategy_class}">
+	    <property name="inFilter" ref="${inFilter_Weather_WeatherSoap_GetCityWeatherByZIP_route}" />
+	    <property name="outFilter" ref="${outFilter_Weather_WeatherSoap_GetCityWeatherByZIP_route}" />    
+	    <property name="outFilterPattern" value="${Default_WebService_SOAPBinding_GlobalSoapHeaderFilterStrategy_outFilterPattern}"/>
+	    <property name="inFilterPattern" value="${Default_WebService_SOAPBinding_GlobalSoapHeaderFilterStrategy_inFilterPattern}"/>
+	    <property name="lowerCase">
+        	<value>true</value>
+		</property>
+	  </bean>
+	
+	<!-- Uncomment the below spring bean definitions if you wish to define the 
+		strategies specific to this operation. You have to update the reference bean 
+		IDs in the strategy definition beans to the IDs of the below beans. -->
+		
+	<!--	  
+	  <bean id="bindingRulesBean_Weather_WeatherSoap_GetCityWeatherByZIP_route" class="com.progress.caf.binding.strategy.impl.BindingRulesImpl">
+
+		<property name="inBindingRules">
+			<set>
+	-->
+				<!-- Sample binding rule. Modify as required -->
+				<!--
+				<cafBinding:bindingRule>
+					<cafBinding:from value="${prodmsg.parts['content_type_header']}" valueType="EXPRESSION" />
+					<cafBinding:to value="Content-Type" valueType="CAMEL_TRANSPORT_HEADER " />
+				</cafBinding:bindingRule>
+				--> 
+	<!--
+			</set>
+		</property>
+
+		<property name="outBindingRules">
+			<set>
+	-->
+				<!-- Sample binding rule. Modify as required --> 
+				<!--
+				<cafBinding:bindingRule>
+					<cafBinding:from value="Content-Type" valueType="CAMEL_TRANSPORT_HEADER" />
+					<cafBinding:to value="${prodmsg.parts['content_type_header']}" valueType="EXPRESSION" />
+				</cafBinding:bindingRule>
+				--> 
+	<!--
+			</set>
+		</property>
+	 </bean>
+	
+	  <bean id="inFilter_Weather_WeatherSoap_GetCityWeatherByZIP_route" class="org.springframework.beans.factory.config.SetFactoryBean">
+	    <property name="sourceSet">
+	      <set>
+	      </set>
+	    </property>
+	  </bean>
+	  
+	  <bean id="outFilter_Weather_WeatherSoap_GetCityWeatherByZIP_route" class="org.springframework.beans.factory.config.SetFactoryBean">
+	    <property name="sourceSet">
+	    	<set>
+        		<value>operationname</value>
+        		<value>operationnamespace</value>
+        		<value>requestcontext</value>
+        		<value>responsecontext</value>
+        		<value>content-type</value>
+        		<value>content-length</value>
+        		<value>principalname</value>
+        		<value>principalsource</value>
+        		<value>aipropagatedid</value>
+        		<value>aipropagatedidlong</value>
+        		<value>httpdigestauth</value>
+        		<value>httpbasicauth</value>
+        		<value>tlsx509subjectfirstcn</value>
+        		<value>tlsx509subjectdn</value>
+      		</set>
+	    </property>
+	  </bean>
+	-->
+</beans>

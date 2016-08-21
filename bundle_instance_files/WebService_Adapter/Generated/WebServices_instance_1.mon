@@ -1,0 +1,213 @@
+
+/*
+ *
+ * DO NOT MODIFY THIS FILE. This is AUTO-GENERATED. 
+ * Monitor for handling Webservice requests. 
+ */
+ 
+
+package com.apama.ws.service;
+
+using com.apama.adapters.AdapterStatusDeregister;
+using com.apama.adapters.AdapterStatusRegister;
+using com.apama.statusreport.SubscribeStatus;
+using com.apama.statusreport.UnsubscribeStatus;
+using com.apama.statusreport.Status;
+using com.apama.statusreport.StatusError;
+using com.apama.adapters.AdapterError;
+using com.apama.adapters.AdapterUp;
+
+using com.apama.ws.WSRequest;
+using com.apama.ws.WSError;
+using com.apama.ws.WSConstants;
+
+
+/**
+ * This generated monitor handles the caf requests.  It encodes and forwards it
+ * to the WebService Adapter service. 
+ *
+ * Interested monitors should register for status via the
+ * com.apama.statusreport.SubscribeStatus event using the service name
+ * "Webservice_INSTANCE_1".
+ */
+monitor WS_Client_INSTANCE_1
+{
+	// The application needs to use this service id to register for status
+	constant string SERVICE_ID := "Webservice_INSTANCE_1";
+	constant string ADAPTER_NAME := "Webservice_INSTANCE_1"; // same as service id
+	
+	// Constants.
+	constant string CODEC_NAME := "WSDataMessageCodec";
+	constant string CHANNEL_NAME := "WebServices_INSTANCE_1";
+	constant string TRANSPORT_NAME := "WebServices_INSTANCE_1";  // Same as channel name
+	constant string MONITOR_NAME := "WS_Client_INSTANCE_1";
+	
+	WSConstants wsConstant;
+	
+	// Status support.
+	Status statusEvent;
+    StatusError statusErrorEvent;
+    AdapterUp adapterUpEvent;
+    AdapterError adapterErrorEvent;
+	
+	// Keep track of the number of status subscriptions from the application
+    // so we won't stop sending status events until all subscribers are gone.
+    integer statusSubscriptionCount := 0;
+	
+	// Summary strings.  These may be used in the summary for the
+    // Status event to the application.
+    string CONNECTED := "Connected";
+
+	// Names of events to be persisted
+	sequence<string> eventNames := [
+		"MyRequest"				
+		];
+	
+	// flag to indicate that the Webservice adapter is up and available
+	boolean adapterUp := false;
+	
+	action onload()
+	{
+		log "Loaded WS Client service: " + SERVICE_ID at INFO;
+		log "   Supported events: " + eventNames.toString() at INFO;
+		
+		// Register for IAFStatus events
+        route AdapterStatusRegister(ADAPTER_NAME, CODEC_NAME, TRANSPORT_NAME, "", "", "", CHANNEL_NAME);
+		
+		// setup listerers for status  
+		setupListenersForStatus();
+		
+		// setup listeners for requests in this context
+		listenForClientRequests();
+	}
+	
+	action setupListenersForStatus()
+	{
+		
+		on all SubscribeStatus(serviceID = "") or
+            all SubscribeStatus(serviceID = SERVICE_ID)
+        {
+            statusSubscriptionCount := statusSubscriptionCount + 1;
+            
+            // When an application first subscribes, send out a status.
+            sendStatusReport();
+        }
+        
+        on all UnsubscribeStatus(serviceID = "") or
+            all UnsubscribeStatus(serviceID = SERVICE_ID)
+        {
+            statusSubscriptionCount := statusSubscriptionCount - 1;
+        }
+		
+		on all AdapterUp(adapterName = ADAPTER_NAME):adapterUpEvent
+        {
+            if (adapterUpEvent.transportStatus.hasKey("CONNECTION")) then {
+        		log (ADAPTER_NAME + " adapter is up: " + adapterUpEvent.toString()) at DEBUG;
+       			adapterUp := true;
+    		} else {
+        		log (ADAPTER_NAME + " adapter is down: " + adapterUpEvent.toString()) at ERROR;
+	        	adapterUp := false;
+    		}
+    		// Update status info and send to application.
+            sendStatusReport();
+        }
+						
+        on all AdapterError(adapterName = ADAPTER_NAME):adapterErrorEvent
+        {
+            log (ADAPTER_NAME + " adapter is down: " + adapterErrorEvent.toString()) at ERROR;
+
+            // Update status info and send to application.
+            adapterUp := false;
+            
+            sendStatusReport();
+        }		
+		
+	}
+	
+	/**
+     * Send a Status event if we have subscribers.
+     */
+    action sendStatusReport()
+    {
+        statusEvent.summaries := new sequence<string>;
+        if (statusSubscriptionCount > 0) then
+        {
+			statusEvent.serviceID := SERVICE_ID;
+            if (adapterUp) then
+            {
+                statusEvent.description := ADAPTER_NAME + " adapter up.";
+                statusEvent.available := true;
+                statusEvent.summaries.append(CONNECTED);
+            }
+            else
+            {
+                statusEvent.description := ADAPTER_NAME + " adapter is not up.";
+                statusEvent.available := false;
+            }                             
+            route statusEvent;                      
+        }
+    }	
+	
+	/**
+	 * This action sets up the listeners for the request events. 
+	 */
+	action listenForClientRequests()
+	{		
+		// Create listener for request(MyRequest) event
+		MyRequest evt_1;
+		on all MyRequest():evt_1
+		{
+				handleRequest(evt_1.toString(), "INSTANCE_1_Weather_WeatherSoap_GetCityWeatherByZIP_routeOperation_1", context.current());
+		}				
+	}
+	
+	action handleRequest(string eventStr, string beanId, context sourceContext)
+	{
+		if (adapterUp) then {
+
+			// create the WS client request event
+			WSRequest request := new WSRequest;
+			request.endpointId := beanId;
+			request.requestId:= integer.getUnique().toString();
+			request.eventStr := eventStr;
+			log "WS client request: " + request.toString() at DEBUG;
+
+			// route the request
+			emit request to CHANNEL_NAME;
+		}
+		else
+		{	
+			string errMsg := "WS Client Adapter unavailable. Unable to send the request: " + eventStr;
+			dictionary<string,string> extraParams := {};
+			sendErrorMessage(eventStr,errMsg, wsConstant.getAdapterDownType(),extraParams,sourceContext);
+			log errMsg at WARN;
+		}
+	}
+	
+	/**
+	 * Sends error message to given context;
+	 */
+	action sendErrorMessage(string requestEvent,string errMsg,string failureType,dictionary<string, string> extraParams,context sourceContext)
+	{
+		extraParams.add("serviceId",SERVICE_ID);
+		WSError error := WSError(requestEvent, errMsg,failureType,extraParams);
+		enqueue error to sourceContext;
+	}
+	
+	/**
+     * Handle any cleanup.
+     */
+    action ondie()
+    {
+		// Unsubscribe from IAFStatusManager
+		route AdapterStatusDeregister(ADAPTER_NAME);
+		
+		statusErrorEvent.serviceID := SERVICE_ID;
+		statusErrorEvent.description := MONITOR_NAME + " is dying.";
+		statusErrorEvent.failed := true;
+		route statusErrorEvent;
+			
+		log MONITOR_NAME + " has been asked to terminate.  Removing monitor now." at INFO;
+    }
+}
+

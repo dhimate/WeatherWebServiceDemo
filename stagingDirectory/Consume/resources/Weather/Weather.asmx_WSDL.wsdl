@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:tns="http://ws.cdyne.com/WeatherWS/" targetNamespace="http://ws.cdyne.com/WeatherWS/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified"><import namespace="http://ws.cdyne.com/WeatherWS/" schemaLocation="../../../Consume/resources/Weather/1_Inline_Weather.asmx.xsd" xmlns="http://www.w3.org/2001/XMLSchema"/></s:schema>
+  </wsdl:types>
+  <wsdl:message name="GetWeatherInformationSoapIn">
+    <wsdl:part element="tns:GetWeatherInformation" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetWeatherInformationSoapOut">
+    <wsdl:part element="tns:GetWeatherInformationResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetCityForecastByZIPSoapIn">
+    <wsdl:part element="tns:GetCityForecastByZIP" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetCityForecastByZIPSoapOut">
+    <wsdl:part element="tns:GetCityForecastByZIPResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetCityWeatherByZIPSoapIn">
+    <wsdl:part element="tns:GetCityWeatherByZIP" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetCityWeatherByZIPSoapOut">
+    <wsdl:part element="tns:GetCityWeatherByZIPResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetWeatherInformationHttpGetIn"/>
+  <wsdl:message name="GetWeatherInformationHttpGetOut">
+    <wsdl:part element="tns:ArrayOfWeatherDescription" name="Body"/>
+  </wsdl:message>
+  <wsdl:message name="GetCityForecastByZIPHttpGetIn">
+    <wsdl:part name="ZIP" type="s:string"/>
+  </wsdl:message>
+  <wsdl:message name="GetCityForecastByZIPHttpGetOut">
+    <wsdl:part element="tns:ForecastReturn" name="Body"/>
+  </wsdl:message>
+  <wsdl:message name="GetCityWeatherByZIPHttpGetIn">
+    <wsdl:part name="ZIP" type="s:string"/>
+  </wsdl:message>
+  <wsdl:message name="GetCityWeatherByZIPHttpGetOut">
+    <wsdl:part element="tns:WeatherReturn" name="Body"/>
+  </wsdl:message>
+  <wsdl:message name="GetWeatherInformationHttpPostIn"/>
+  <wsdl:message name="GetWeatherInformationHttpPostOut">
+    <wsdl:part element="tns:ArrayOfWeatherDescription" name="Body"/>
+  </wsdl:message>
+  <wsdl:message name="GetCityForecastByZIPHttpPostIn">
+    <wsdl:part name="ZIP" type="s:string"/>
+  </wsdl:message>
+  <wsdl:message name="GetCityForecastByZIPHttpPostOut">
+    <wsdl:part element="tns:ForecastReturn" name="Body"/>
+  </wsdl:message>
+  <wsdl:message name="GetCityWeatherByZIPHttpPostIn">
+    <wsdl:part name="ZIP" type="s:string"/>
+  </wsdl:message>
+  <wsdl:message name="GetCityWeatherByZIPHttpPostOut">
+    <wsdl:part element="tns:WeatherReturn" name="Body"/>
+  </wsdl:message>
+  <wsdl:portType name="WeatherSoap">
+    <wsdl:operation name="GetWeatherInformation">
+      <wsdl:documentation>Gets Information for each WeatherID</wsdl:documentation>
+      <wsdl:input message="tns:GetWeatherInformationSoapIn"/>
+      <wsdl:output message="tns:GetWeatherInformationSoapOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetCityForecastByZIP">
+      <wsdl:documentation>Allows you to get your City Forecast Over the Next 7 Days, which is updated hourly. U.S. Only</wsdl:documentation>
+      <wsdl:input message="tns:GetCityForecastByZIPSoapIn"/>
+      <wsdl:output message="tns:GetCityForecastByZIPSoapOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetCityWeatherByZIP">
+      <wsdl:documentation>Allows you to get your City's Weather, which is updated hourly. U.S. Only</wsdl:documentation>
+      <wsdl:input message="tns:GetCityWeatherByZIPSoapIn"/>
+      <wsdl:output message="tns:GetCityWeatherByZIPSoapOut"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="WeatherHttpGet">
+    <wsdl:operation name="GetWeatherInformation">
+      <wsdl:documentation>Gets Information for each WeatherID</wsdl:documentation>
+      <wsdl:input message="tns:GetWeatherInformationHttpGetIn"/>
+      <wsdl:output message="tns:GetWeatherInformationHttpGetOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetCityForecastByZIP">
+      <wsdl:documentation>Allows you to get your City Forecast Over the Next 7 Days, which is updated hourly. U.S. Only</wsdl:documentation>
+      <wsdl:input message="tns:GetCityForecastByZIPHttpGetIn"/>
+      <wsdl:output message="tns:GetCityForecastByZIPHttpGetOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetCityWeatherByZIP">
+      <wsdl:documentation>Allows you to get your City's Weather, which is updated hourly. U.S. Only</wsdl:documentation>
+      <wsdl:input message="tns:GetCityWeatherByZIPHttpGetIn"/>
+      <wsdl:output message="tns:GetCityWeatherByZIPHttpGetOut"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="WeatherHttpPost">
+    <wsdl:operation name="GetWeatherInformation">
+      <wsdl:documentation>Gets Information for each WeatherID</wsdl:documentation>
+      <wsdl:input message="tns:GetWeatherInformationHttpPostIn"/>
+      <wsdl:output message="tns:GetWeatherInformationHttpPostOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetCityForecastByZIP">
+      <wsdl:documentation>Allows you to get your City Forecast Over the Next 7 Days, which is updated hourly. U.S. Only</wsdl:documentation>
+      <wsdl:input message="tns:GetCityForecastByZIPHttpPostIn"/>
+      <wsdl:output message="tns:GetCityForecastByZIPHttpPostOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetCityWeatherByZIP">
+      <wsdl:documentation>Allows you to get your City's Weather, which is updated hourly. U.S. Only</wsdl:documentation>
+      <wsdl:input message="tns:GetCityWeatherByZIPHttpPostIn"/>
+      <wsdl:output message="tns:GetCityWeatherByZIPHttpPostOut"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WeatherSoap" type="tns:WeatherSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="GetWeatherInformation">
+      <soap:operation soapAction="http://ws.cdyne.com/WeatherWS/GetWeatherInformation" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCityForecastByZIP">
+      <soap:operation soapAction="http://ws.cdyne.com/WeatherWS/GetCityForecastByZIP" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCityWeatherByZIP">
+      <soap:operation soapAction="http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WeatherSoap12" type="tns:WeatherSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="GetWeatherInformation">
+      <soap12:operation soapAction="http://ws.cdyne.com/WeatherWS/GetWeatherInformation" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCityForecastByZIP">
+      <soap12:operation soapAction="http://ws.cdyne.com/WeatherWS/GetCityForecastByZIP" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCityWeatherByZIP">
+      <soap12:operation soapAction="http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WeatherHttpGet" type="tns:WeatherHttpGet">
+    <http:binding verb="GET"/>
+    <wsdl:operation name="GetWeatherInformation">
+      <http:operation location="/GetWeatherInformation"/>
+      <wsdl:input>
+        <http:urlEncoded/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCityForecastByZIP">
+      <http:operation location="/GetCityForecastByZIP"/>
+      <wsdl:input>
+        <http:urlEncoded/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCityWeatherByZIP">
+      <http:operation location="/GetCityWeatherByZIP"/>
+      <wsdl:input>
+        <http:urlEncoded/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WeatherHttpPost" type="tns:WeatherHttpPost">
+    <http:binding verb="POST"/>
+    <wsdl:operation name="GetWeatherInformation">
+      <http:operation location="/GetWeatherInformation"/>
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded"/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCityForecastByZIP">
+      <http:operation location="/GetCityForecastByZIP"/>
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded"/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCityWeatherByZIP">
+      <http:operation location="/GetCityWeatherByZIP"/>
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded"/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Weather">
+    <wsdl:port binding="tns:WeatherSoap" name="WeatherSoap">
+      <soap:address location="http://wsf.cdyne.com/WeatherWS/Weather.asmx"/>
+    </wsdl:port>
+    <wsdl:port binding="tns:WeatherSoap12" name="WeatherSoap12">
+      <soap12:address location="http://wsf.cdyne.com/WeatherWS/Weather.asmx"/>
+    </wsdl:port>
+    <wsdl:port binding="tns:WeatherHttpGet" name="WeatherHttpGet">
+      <http:address location="http://wsf.cdyne.com/WeatherWS/Weather.asmx"/>
+    </wsdl:port>
+    <wsdl:port binding="tns:WeatherHttpPost" name="WeatherHttpPost">
+      <http:address location="http://wsf.cdyne.com/WeatherWS/Weather.asmx"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

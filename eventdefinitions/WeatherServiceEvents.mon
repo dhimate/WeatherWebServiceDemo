@@ -1,0 +1,57 @@
+//*****************************************************************************
+// Title:         WeatherServiceEvents
+// Description:   WeatherServiceEvents description
+// Dependencies:  None
+// Author:        IEUser
+//
+//*****************************************************************************
+
+
+event GetCityWeatherByZIPType {
+	string ZIP;
+}
+
+event GetCityWeatherByZIPResultType {
+	string Success;
+	string ResponseText;
+	string State;
+	string City;
+	string WeatherStationCity;
+	string WeatherID;
+	string Description;
+	string Temperature;
+	string RelativeHumidity;
+	string Wind;
+	string Pressure;
+	string Visibility;
+	string WindChill;
+	string Remarks;	
+}
+
+event GetCityWeatherByZIPResponseType {
+	GetCityWeatherByZIPResultType GetCityWeatherByZIPResult;
+}
+
+event MyRequest {
+	GetCityWeatherByZIPType GetCityWeatherByZIP;
+}
+
+event MyResponse {
+	GetCityWeatherByZIPResponseType GetCityWeatherByZIPResponse;
+}
+
+event MyZIP {
+	string ZIP;
+}
+
+
+
+
+
+
+
+
+
+
+
+

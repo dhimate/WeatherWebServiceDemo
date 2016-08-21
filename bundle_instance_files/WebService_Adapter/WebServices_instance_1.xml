@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+	Please refer to the main Apama documentation set at the following location:
+	"Deploying and Managing Apama Applications : Using the Apama Web Services Client Adapter" 
+	for more details of the configuration options used in this sample, and any 
+	others that may be available.
+	
+	$Copyright (c) 2011-2012 Progress Software Corporation. All rights reserved. $
+	$Copyright (c) 2013-2014 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.$
+	Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG
+
+	
+	$Id$
+--><adapter-config xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<!-- Set the IAF (<logging>) and Web Services transport (<plugin-logging>) level 
+		(these settings are ignored if log level specified on iaf command line) 
+	-->
+	<logging level="INFO"/> 
+	<plugin-logging level="INFO"/> 
+
+	<java>
+	<classpath path="@ADAPTERS_JARDIR@/WebServicesTransport.jar"/>
+  <classpath path="@ADAPTERS_JARDIR@/JNullCodec.jar"/>
+  <property name="log4j.configuration" value="file:///@APAMA_HOME@/adapters/config/adapters-log4j.properties"/>
+	</java>
+
+	<transports>
+	<transport className="com.apama.iaf.transport.webservices.WebServicesTransport" jarName="@ADAPTERS_JARDIR@/WebServicesTransport.jar" name="WebServices_@ADAPTER_INSTANCE_ID@">
+    <property name="webServicesConfig" value="@WS_SPRING_PATH@/@WS_SPRING_FILE_NAME@"/>
+    <property name="decoderName" value="WSDataMessageCodec"/>
+    <property name="logAllMessages" value="false"/>
+  </transport>
+	</transports>
+
+	<!-- Codecs -->
+	<codecs>
+		<!-- 
+			The JNullCodec is the only codec supported with the Web Services adapter
+		-->
+		<codec name="WSDataMessageCodec" className="com.apama.iaf.codec.nullcodec.JNullCodec"/>
+		<xi:include href="WebServices-static.xml" xpointer="xpointer(/static/codecs/*)"/>
+	</codecs>
+	
+	<!-- Event mappings -->
+	<mapping>
+	
+		<xi:include href="WebServices-static.xml" xpointer="xpointer(/static/mapping/*)"/>
+	</mapping>
+
+	<!--
+	  apama and/or universal-messaging elements can be enabled to define how IAF connects
+	  to the Apama event correlator(s).
+	-->
+	<!--
+	  The enabled attribute has valid values as "true" or "false". Based on Launch Configuration
+	  UM Configuration Check box this value is set to "true" or "false". If the UM Configuration
+	  Check box for Adapters Launch Configuration is checked then "false" is used else "true".
+	  Users can set the attribute value if Launch Configuration based substitution is not required.
+	-->
+	<apama enabled="@APAMA_MSG_ENABLED@">
+		<sinks>
+			<sink host="@CORRELATOR_HOST@" port="@CORRELATOR_PORT@"/>
+		</sinks>
+		<sources>
+			<source host="@CORRELATOR_HOST@" port="@CORRELATOR_PORT@" channels="WebServices_@ADAPTER_INSTANCE_ID@"/>
+		</sources>
+	</apama>
+
+	<!--
+	  The enabled attribute has valid values as "true" or "false". Based on Launch Configuration
+	  UM Configuration Check box this value is set to "true" or "false". If the UM Configuration
+	  Check box for Adapters Launch Configuration is checked then "true" is used else "false".
+	  Users can set the attribute value if Launch Configuration based substitution is not required.
+	  The UM Properties file is picked up from the Project Directory Config folder which is the 
+	  location for the UM Configuration file in Apama Studio.
+	-->
+	<universal-messaging enabled="@UM_MSG_ENABLED@" um-properties="@UM_CONFIGURATION_FILE@" defaultChannel="@BUNDLE_DISPLAY_NAME@ @ADAPTER_INSTANCE_NAME@">
+		<subscriber channels="WebServices_@ADAPTER_INSTANCE_ID@"/>
+	</universal-messaging>
+
+</adapter-config>

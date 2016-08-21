@@ -1,0 +1,15 @@
+###############################################################################
+# $Copyright (c) 2015 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.$
+# Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG
+###############################################################################
+
+#To set the default log file and level for an EPL package, monitor, or event, specify
+# logging details in the [ApplicationLogging] section of the extended configuration file. 
+#For example:
+#[ApplicationLogging]
+#PackageFile.com.myCompany=apama\\apama.log
+#PackageLevel.com.myCompany=WARN
+#PackageLevel.com.myCompany.Client=DEBUG
+
+#See "Using the Apama component extended configuration file" in the documentation for more
+# information about the supported options.

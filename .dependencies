@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<apama-project>
+	<dependency>
+		<dependencyentry path="" kind="src"/>
+	</dependency>
+	<catalogs>
+		<catalog path="catalogs/Generated scenario blocks" type="block"/>
+		<catalog path="catalogs/WeatherWebServiceDemo blocks" type="block"/>
+		<catalog path="catalogs/WeatherWebServiceDemo functions" type="function"/>
+	</catalogs>
+	<bundles>
+		<bundle file="WebServices.bnd" origin-path="" origin="ADAPTER_CATALOG">
+			<instance name="instance 1"/>
+			<config-files>
+				<file name="..\..\config/WebServices.xml.dist" timestamp="1471710763308"/>
+			</config-files>
+			<bundle-instance-files>
+				<file name="${APAMA_HOME}/adapters/config/WebServices.settings" timestamp="1471710763308"/>
+			</bundle-instance-files>
+			<static-files>
+				<file name="..\..\config/WebServices-static.xml" timestamp="1471710763308"/>
+			</static-files>
+			<dashboard-files>
+			</dashboard-files>
+			<evt-files>
+			</evt-files>
+		</bundle>
+		<bundle file="ScenarioService.bnd" origin-path="" origin="PRODUCT_CATALOG">
+			<instance name=""/>
+			<config-files>
+			</config-files>
+			<bundle-instance-files>
+			</bundle-instance-files>
+			<static-files>
+			</static-files>
+			<dashboard-files>
+			</dashboard-files>
+			<evt-files>
+			</evt-files>
+		</bundle>
+	</bundles>
+</apama-project>

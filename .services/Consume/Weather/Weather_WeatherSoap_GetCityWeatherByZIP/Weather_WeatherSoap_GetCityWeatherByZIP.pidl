@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pidlv1:description targetNamespace="http://ws.cdyne.com/WeatherWS/" serviceType="webserviceInvoke" xmlns:tns="http://ws.cdyne.com/WeatherWS/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:webService="http://www.progress.com/caf/idl1.0/webService11" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:pidlv1="http://www.progress.com/caf/idl1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+<pidlv1:types>
+<s:schema xmlns:s="http://www.w3.org/2001/XMLSchema"
+          xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+          xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+          xmlns:tns="http://ws.cdyne.com/WeatherWS/"
+          xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+          xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/"
+          xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+          xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+          xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+          attributeFormDefault="unqualified"
+          elementFormDefault="qualified">
+   <s:import namespace="http://ws.cdyne.com/WeatherWS/"
+             schemaLocation="../../../Consume/resources/Weather/1_Inline_Weather.asmx.xsd"/>
+</s:schema></pidlv1:types>
+  <pidlv1:interface name="WeatherSoap">
+    <pidlv1:operation name="GetCityWeatherByZIP" pattern="http://www.w3.org/ns/wsdl/in-out">
+      <pidlv1:input messageLabel="parameters" req="false" element="tns:GetCityWeatherByZIP">
+    </pidlv1:input>
+      <pidlv1:output messageLabel="parameters" req="false" element="tns:GetCityWeatherByZIPResponse">
+    </pidlv1:output>
+    </pidlv1:operation>
+  </pidlv1:interface>
+  <pidlv1:binding name="WeatherSoap" interface="tns:WeatherSoap" type="tns:WeatherSoap">
+    <pidlv1:operation ref="tns:GetCityWeatherByZIP">
+  <webService:bindingName name="WeatherSoap" namespace="http://ws.cdyne.com/WeatherWS/"/>
+    </pidlv1:operation>
+  </pidlv1:binding>
+  <pidlv1:service name="Weather" interface="tns:WeatherSoap">
+    <pidlv1:endpoint name="WeatherSoap" binding="tns:WeatherSoap">
+  <webService:serviceInfo name="Weather" namespace="http://ws.cdyne.com/WeatherWS/" portInfo="WeatherSoap"/>
+    </pidlv1:endpoint>
+    </pidlv1:service>
+</pidlv1:description>
